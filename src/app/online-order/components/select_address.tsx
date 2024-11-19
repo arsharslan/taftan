@@ -1,0 +1,327 @@
+import firebase_app from "@/firebase/config";
+import { IAddress } from "@/models/address"
+import { fetchAddresses, postAddress } from "@/provider/api_provider";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from "react";
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast, ToastContainer } from "react-toastify";
+import FieldErrorDisplay from "@/components/field_error";
+import LoadingIndicator from "@/components/loading_indicator";
+import React from "react";
+
+type AddressForm = {
+    name: string;
+    street_address: string;
+    city: string;
+    state: string;
+    landmark?: string;
+    pin_code: number;
+    phone_number: string;
+}
+
+const schema = z.object({
+    name: z.string().min(3),
+    street_address: z.string().min(3),
+    city: z.string().min(3),
+    state: z.string().min(3),
+    landmark: z.string().nullish(),
+    pin_code: z.number().min(6),
+    phone_number: z.string().min(10)
+})
+
+export default function SelectAddressView() {
+
+    const [addresses, setAddresses] = useState<IAddress[]>([]);
+    const [open, setOpen] = useState<boolean>(false);
+
+    const getAddresses = async () => {
+        const response = await fetchAddresses({ user_id: localStorage.getItem("user_id") ?? "" });
+        if (response.data) {
+            setAddresses(response.data);
+        }
+    }
+
+    useEffect(() => {
+        getAddresses();
+    }, []);
+
+    const { register, reset, handleSubmit, formState: { errors } } = useForm<AddressForm>({ resolver: zodResolver(schema) });
+    const [isAddingAddress, setIsAddingAddress] = useState<boolean>(false);
+
+    const submit = async (data: AddressForm) => {
+        setIsAddingAddress(true);
+        const response = await postAddress({
+            address: {
+                user_id: localStorage.getItem("user_id") ?? "",
+                name: data.name,
+                street_address: data.street_address,
+                city: data.city,
+                state: data.state,
+                landmark: data.landmark,
+                pin_code: data.pin_code,
+                phone_number: data.phone_number
+            }
+        });
+        if (response.data) {
+            toast("Address added successfully!");
+            getAddresses();
+        }
+        setIsAddingAddress(false);
+    }
+
+    return <>
+        <div className="m-16 flex">
+            <h2 className="mr-auto text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">
+                Select Address
+            </h2>
+
+            <button
+                type="button"
+                onClick={() => {
+                    setOpen(true);
+                }}
+                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+                Add Address
+            </button>
+        </div>
+
+        {addresses.map((address, index) => <div
+            key={index}
+            className="overflow-hidden rounded-lg bg-gray-800 shadow-md mx-8">
+            <div className="px-4 py-5 sm:p-6">
+                <table className="min-w-full divide-y divide-gray-300 " >
+                    {/* <thead>
+                        <tr className="divide-x divide-[#DAA520]">
+                            <th scope="col" className="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                                #
+                            </th>
+                            <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">
+
+                            </th>
+
+                        </tr>
+                    </thead> */}
+                    <tbody className="divide-y divide-[#DAA520] text-white">
+                        <tr className="divide-x divide-[#DAA520]">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
+                                Name
+                            </td>
+                            <td className="whitespace-nowrap p-4 text-sm">
+                                {address.name}
+                            </td>
+                        </tr>
+                        <tr className="divide-x divide-[#DAA520]">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
+                                Street Address
+                            </td>
+                            <td className="whitespace-nowrap p-4 text-sm">{address.street_address}</td>
+                        </tr>
+                        <tr className="divide-x divide-[#DAA520]">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
+                                City
+                            </td>
+                            <td className="whitespace-nowrap p-4 text-sm">{address.city}</td>
+
+                        </tr>
+                        <tr className="divide-x divide-[#DAA520]">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
+                                State
+                            </td>
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm sm:pr-0">{address.state}</td>
+
+                        </tr>
+                        {address.landmark && <tr className="divide-x divide-[#DAA520]">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
+                                Landmark
+                            </td>
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm sm:pr-0">{address.landmark}</td>
+
+                        </tr>}
+                        <tr className="divide-x divide-[#DAA520]">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
+                                Pin Code
+                            </td>
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm sm:pr-0">{address.pin_code}</td>
+                        </tr>
+                        <tr className="divide-x divide-[#DAA520]">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
+                                Phone Number
+                            </td>
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm sm:pr-0">{address.phone_number}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div className="flex">
+                <button
+                    type="button"
+                    className="mx-8 mb-8 ml-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                >
+                    Select
+                </button>
+            </div>
+        </div>)}
+
+        <Dialog open={open} onClose={setOpen} className="relative z-10">
+            <DialogBackdrop
+                transition
+                className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+            />
+
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <DialogPanel
+                        transition
+                        className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                    >
+                        <form className="mt-2" onSubmit={handleSubmit(submit)}>
+
+                            <div>
+                                <div className="text-center space-y-2">
+                                    <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                                        Add Address
+                                    </DialogTitle>
+                                    <div>
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                            Name
+                                        </label>
+                                        <div className="mt-2">
+                                            <input
+                                                {...register("name", { required: true })}
+                                                id="name"
+                                                name="name"
+                                                type="text"
+                                                placeholder="you@example.com"
+                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                            />
+                                            {errors.name?.message && <FieldErrorDisplay error={errors.name?.message} className="flex" />}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                            Street Address
+                                        </label>
+                                        <div className="mt-2">
+                                            <input
+                                                {...register("street_address", { required: true })}
+                                                id="street_address"
+                                                name="street_address"
+                                                type="text"
+                                                placeholder="you@example.com"
+                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                            />
+                                            {errors.street_address?.message && <FieldErrorDisplay error={errors.street_address?.message} className="flex" />}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                            City
+                                        </label>
+                                        <div className="mt-2">
+                                            <input
+                                                {...register("city", { required: true })}
+                                                id="city"
+                                                name="city"
+                                                type="text"
+                                                placeholder="you@example.com"
+                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                            />
+                                            {errors.city?.message && <FieldErrorDisplay error={errors.city?.message} className="flex" />}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                            State
+                                        </label>
+                                        <div className="mt-2">
+                                            <input
+                                                {...register("state", { required: true })}
+                                                id="state"
+                                                name="state"
+                                                type="text"
+                                                placeholder="you@example.com"
+                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                            />
+                                            {errors.state?.message && <FieldErrorDisplay error={errors.state?.message} className="flex" />}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                            Landmark
+                                        </label>
+                                        <div className="mt-2">
+                                            <input
+                                                {...register("landmark")}
+                                                id="landmark"
+                                                name="landmark"
+                                                type="text"
+                                                placeholder="you@example.com"
+                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                            />
+                                            {errors.landmark?.message && <FieldErrorDisplay error={errors.landmark?.message} className="flex" />}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                            Pin Code
+                                        </label>
+                                        <div className="mt-2">
+                                            <input
+                                                {...register("pin_code", { required: true, valueAsNumber: true })}
+                                                id="pin_code"
+                                                name="pin_code"
+                                                type="text"
+                                                placeholder="you@example.com"
+                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                            />
+                                            {errors.pin_code?.message && <FieldErrorDisplay error={errors.pin_code?.message} className="flex" />}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                            Phone Number
+                                        </label>
+                                        <div className="mt-2">
+                                            <input
+                                                {...register("phone_number", { required: true })}
+                                                id="phone_number"
+                                                name="phone_number"
+                                                type="text"
+                                                placeholder="you@example.com"
+                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                            />
+                                            {errors.phone_number?.message && <FieldErrorDisplay error={errors.phone_number?.message} className="flex" />}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                                <button
+                                    type="submit"
+                                    className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                                >
+                                    {isAddingAddress ? <LoadingIndicator /> : "Save"}
+                                </button>
+                                <button
+                                    type="button"
+                                    data-autofocus
+                                    onClick={() => setOpen(false)}
+                                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </DialogPanel>
+                </div>
+            </div>
+        </Dialog>
+
+        <ToastContainer
+            toastStyle={{ backgroundColor: "black", color: "white" }} />
+    </>
+}

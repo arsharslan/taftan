@@ -73,6 +73,9 @@ export default function SignInView() {
             const user = result.user;
             const response = await findUser({ firebase_id: user.uid });
             if (response.data) {
+                if (response.data._id) {
+                    localStorage.setItem("user_id", response.data._id);
+                }
                 router.push(searchParams?.get("redirect") ?? "/");
             } else {
                 router.push(`/onboard?${searchParams?.get("redirect") ? `redirect=${searchParams?.get("redirect")}` : ""}`);
@@ -102,6 +105,9 @@ export default function SignInView() {
             const result = await signInWithEmailAndPassword(auth, emailRef.current?.value, passwordRef.current?.value);
             const response = await findUser({ firebase_id: result.user.uid });
             if (response.data) {
+                if (response.data._id) {
+                    localStorage.setItem("user_id", response.data._id);
+                }
                 router.push(searchParams?.get("redirect") ?? "/");
             } else {
                 router.push(`/onboard?${searchParams?.get("redirect") ? `redirect=${searchParams?.get("redirect")}` : ""}`);

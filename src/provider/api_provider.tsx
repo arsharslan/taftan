@@ -1,3 +1,4 @@
+import { IAddress } from "@/models/address";
 import { IDish } from "@/models/dish";
 import { IUser } from "@/models/user";
 
@@ -101,6 +102,24 @@ export async function postUser({ user }: { user: IUser }): Promise<ApiResponse<I
 export async function fetchDishes(): Promise<ApiResponse<IDish[]>> {
     return convertResponse<IDish[]>(
         fetch(`api/dishes/`, {
+            headers: getHeaders(),
+        })
+    );
+}
+
+export async function fetchAddresses({ user_id }: { user_id: string }): Promise<ApiResponse<IAddress[]>> {
+    return convertResponse<IAddress[]>(
+        fetch(`api/address/?user_id=${user_id}`, {
+            headers: getHeaders(),
+        })
+    );
+}
+
+export async function postAddress({ address }: { address: IAddress }): Promise<ApiResponse<IAddress[]>> {
+    return convertResponse<IAddress[]>(
+        fetch(`api/address/`, {
+            method: "POST",
+            body: JSON.stringify(address),
             headers: getHeaders(),
         })
     );

@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { OnlineOrderProvider, useOnlineOrderContext } from "./online_order_context";
 import { SelectProductsView } from "./components/select_products";
 import FinalView from "./components/final";
+import SelectAddressView from "./components/select_address";
 
 export interface DishSelected {
     dish: IDish;
@@ -30,7 +31,9 @@ const OnlineOrderView = () => {
 
 
     return <>
-    {currentStep === 1 ? <SelectProductsView /> : <FinalView />}
+        {currentStep === 1 ? <SelectProductsView /> :
+            currentStep === 2 ? <SelectAddressView /> :
+                <FinalView />}
     </>;
 }
 
