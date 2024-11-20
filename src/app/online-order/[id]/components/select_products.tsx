@@ -4,12 +4,17 @@ import { CheckIcon, MinusIcon, PlusIcon } from "@heroicons/react/16/solid";
 import { useEffect, useState } from "react";
 import { useOnlineOrderContext } from "../online_order_context";
 import { DishSelected } from "../page";
-import { fetchDishes } from "@/provider/api_provider";
+import { fetchDishes, postCheckout } from "@/provider/api_provider";
+import { toast, ToastContainer } from "react-toastify";
+import LoadingIndicator from "@/components/loading_indicator";
+import { useRouter } from "next/navigation";
 
 export function SelectProductsView() {
 
     const [dishes, setDishes] = useState<IDish[]>();
     const { dishesSelected, setDishesSelected, currentStep, setCurrentStep } = useOnlineOrderContext();
+
+    const router = useRouter();
 
     const getDishes = async () => {
         const response = await fetchDishes();
@@ -21,6 +26,30 @@ export function SelectProductsView() {
     useEffect(() => {
         getDishes();
     }, []);
+
+    const [isCreatingCheckout, setIsCreatingCheckout] = useState<boolean>(false);
+    const createCheckout = async () => {
+        setIsCreatingCheckout(true);
+        const response = await postCheckout({
+            checkout: {
+                user_id: localStorage.getItem("user_id") ?? "",
+                items: dishesSelected.map((e) => {
+                    return {
+                        dish_id: e.dish?._id ?? undefined,
+                        quantity: e.quantity
+                    };
+                })
+            }
+        });
+        if (response.data) {
+            setCurrentStep(2);
+            toast("Checkout created successfully!");
+            router.push(`/online-order/${response.data._id}`);
+        } else {
+            toast("Error Occurred while creating checkout");
+        }
+        setIsCreatingCheckout(false);
+    }
 
 
     return <div className="flex flex-col h-screen justify-between">
@@ -96,20 +125,20 @@ export function SelectProductsView() {
                             </div>
                         </div>
                         <div className="mt-6">
-                            {dishesSelected.some((x) => x.dish._id === dish._id) ?
+                            {dishesSelected.some((x) => x.dish?._id === dish._id) ?
 
                                 <span className="flex rounded-md shadow-sm">
                                     <button
                                         type="button"
                                         onClick={() => {
                                             setDishesSelected((prev) => {
-                                                const updatedDishSelected = prev.find((x) => x.dish._id === dish._id);
+                                                const updatedDishSelected = prev.find((x) => x.dish?._id === dish._id);
                                                 if (updatedDishSelected?.quantity === dish.min_order) {
-                                                    return [...prev.filter((x) => x.dish._id !== dish._id)];
+                                                    return [...prev.filter((x) => x.dish?._id !== dish._id)];
                                                 } else {
                                                     let quantity = (updatedDishSelected?.quantity ?? 0);
                                                     return [
-                                                        ...prev.filter((x) => x.dish._id !== dish._id),
+                                                        ...prev.filter((x) => x.dish?._id !== dish._id),
                                                         {
                                                             dish,
                                                             quantity: --quantity
@@ -126,16 +155,16 @@ export function SelectProductsView() {
                                         type="button"
                                         className="relative -ml-px flex-1 items-center bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
                                     >
-                                        {dishesSelected.find((x) => x.dish._id === dish._id)?.quantity}
+                                        {dishesSelected.find((x) => x.dish?._id === dish._id)?.quantity}
                                     </button>
                                     <button
                                         type="button"
                                         onClick={() => {
                                             setDishesSelected((prev) => {
-                                                const updatedDishSelected = prev.find((x) => x.dish._id === dish._id);
+                                                const updatedDishSelected = prev.find((x) => x.dish?._id === dish._id);
                                                 let quantity = (updatedDishSelected?.quantity ?? 0);
                                                 return [
-                                                    ...prev.filter((x) => x.dish._id !== dish._id),
+                                                    ...prev.filter((x) => x.dish?._id !== dish._id),
                                                     {
                                                         dish,
                                                         quantity: ++quantity
@@ -178,14 +207,13 @@ export function SelectProductsView() {
         {dishesSelected.length > 0 && <footer className="sticky bottom-0 py-8 ml-auto mr-8">
             <button
                 type="button"
-                onClick={() => {
-                    setCurrentStep(2);
-                }}
+                onClick={createCheckout}
                 className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-                Place Order
+                {isCreatingCheckout ? <LoadingIndicator /> : "Place Order"}
             </button>
         </footer>}
-
+        <ToastContainer
+            toastStyle={{ backgroundColor: "black", color: "white" }} />
     </div>;
 }

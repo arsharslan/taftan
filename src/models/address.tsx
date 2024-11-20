@@ -14,7 +14,7 @@ export interface IAddress {
 }
 
 // Define the schema
-const AddressSchema: Schema<IAddress> = new mongoose.Schema(
+export const AddressSchema: Schema<IAddress> = new mongoose.Schema(
     {
         user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
         name: { type: String, required: true },

@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema, Model } from 'mongoose';
+import mongoose, { Document, Schema, Model, models, model } from 'mongoose';
 
 // Define an interface for the Dessert document
 export interface IDish extends Document {
@@ -74,6 +74,6 @@ const DessertSchema: Schema<IDish> = new mongoose.Schema(
 );
 
 // Create the model
-const Dessert: Model<IDish> = mongoose.model<IDish>('Dish', DessertSchema);
+const Dessert: Model<IDish> = models.Dessert || model<IDish>('Dish', DessertSchema);
 
 export default Dessert;

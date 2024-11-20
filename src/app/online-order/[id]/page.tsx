@@ -1,9 +1,9 @@
 "use client";
 import { IDish } from "@/models/dish";
-import { fetchDishes } from "@/provider/api_provider";
+import { fetchCheckout, fetchDishes } from "@/provider/api_provider";
 import { classNames } from "@/utils/class_names";
 import { CheckIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/solid";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { OnlineOrderProvider, useOnlineOrderContext } from "./online_order_context";
 import { SelectProductsView } from "./components/select_products";
@@ -11,7 +11,8 @@ import FinalView from "./components/final";
 import SelectAddressView from "./components/select_address";
 
 export interface DishSelected {
-    dish: IDish;
+    dish_id?: string;
+    dish?: IDish;
     quantity: number
 }
 
@@ -25,10 +26,27 @@ const steps = [
 
 const OnlineOrderView = () => {
 
+    
+    const { dishesSelected, setDishesSelected, currentStep, setCurrentStep, setCheckout } = useOnlineOrderContext();
+    const params = useParams<{ id: string }>()
+    const checkoutId: string | null = params?.id ?? null;
+    
+    const getChechkout = async () => {
+        if (checkoutId === "0" || !checkoutId) {return;}
+        const response = await fetchCheckout({checkoutId});
+        if (response.data) {
+            setCheckout(response.data);
+            if (response.data.address) {
+                setCurrentStep(2);
+            } else {
+                setCurrentStep(1);
+            }
+        }
+    }
 
-    const { dishesSelected, setDishesSelected, currentStep } = useOnlineOrderContext();
-
-
+    useEffect(() => {
+        getChechkout();
+    }, []);
 
     return <>
         {currentStep === 1 ? <SelectProductsView /> :
@@ -37,8 +55,8 @@ const OnlineOrderView = () => {
     </>;
 }
 
-export default function OnlineOrder() {
+export default function OnlineOrder({params} : {params: any}) {
     return <OnlineOrderProvider>
-        <OnlineOrderView />
+        <OnlineOrderView/>
     </OnlineOrderProvider>;
 }

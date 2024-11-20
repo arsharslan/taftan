@@ -1,4 +1,5 @@
 import { IAddress } from "@/models/address";
+import { ICheckout } from "@/models/checkout";
 import { IDish } from "@/models/dish";
 import { IUser } from "@/models/user";
 
@@ -83,7 +84,7 @@ function getHeaders(isImage = false) {
 }
 export async function findUser({ firebase_id }: { firebase_id: string }): Promise<ApiResponse<IUser>> {
     return convertResponse<IUser>(
-        fetch(`api/users/?firebase_id=${firebase_id}`, {
+        fetch(`/api/users/?firebase_id=${firebase_id}`, {
             headers: getHeaders(),
         })
     );
@@ -91,7 +92,7 @@ export async function findUser({ firebase_id }: { firebase_id: string }): Promis
 
 export async function postUser({ user }: { user: IUser }): Promise<ApiResponse<IUser>> {
     return convertResponse<IUser>(
-        fetch(`api/users/`, {
+        fetch(`/api/users/`, {
             headers: getHeaders(),
             method: "POST",
             body: JSON.stringify(user)
@@ -101,7 +102,7 @@ export async function postUser({ user }: { user: IUser }): Promise<ApiResponse<I
 
 export async function fetchDishes(): Promise<ApiResponse<IDish[]>> {
     return convertResponse<IDish[]>(
-        fetch(`api/dishes/`, {
+        fetch(`/api/dishes/`, {
             headers: getHeaders(),
         })
     );
@@ -109,17 +110,35 @@ export async function fetchDishes(): Promise<ApiResponse<IDish[]>> {
 
 export async function fetchAddresses({ user_id }: { user_id: string }): Promise<ApiResponse<IAddress[]>> {
     return convertResponse<IAddress[]>(
-        fetch(`api/address/?user_id=${user_id}`, {
+        fetch(`/api/address/?user_id=${user_id}`, {
             headers: getHeaders(),
         })
     );
 }
 
-export async function postAddress({ address }: { address: IAddress }): Promise<ApiResponse<IAddress[]>> {
-    return convertResponse<IAddress[]>(
-        fetch(`api/address/`, {
+export async function postAddress({ address }: { address: IAddress }): Promise<ApiResponse<IAddress>> {
+    return convertResponse<IAddress>(
+        fetch(`/api/address/`, {
             method: "POST",
             body: JSON.stringify(address),
+            headers: getHeaders(),
+        })
+    );
+}
+
+export async function postCheckout({ checkout }: { checkout: ICheckout }): Promise<ApiResponse<ICheckout>> {
+    return convertResponse<ICheckout>(
+        fetch(`/api/checkout/`, {
+            method: "POST",
+            body: JSON.stringify(checkout),
+            headers: getHeaders(),
+        })
+    );
+}
+
+export async function fetchCheckout({ checkoutId }: { checkoutId: string }): Promise<ApiResponse<ICheckout>> {
+    return convertResponse<ICheckout>(
+        fetch(`/api/checkout/${checkoutId}`, {
             headers: getHeaders(),
         })
     );
