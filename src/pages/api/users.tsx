@@ -2,6 +2,7 @@ import connectDB from '@/lib/mongodb';
 import clientPromise from '@/lib/mongodb';
 import User from '@/models/user';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { checkAuthorization } from '../check_authorization';
 
 
 export type ResponseData = {
@@ -51,7 +52,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
         });
         console.log(user);
         if (user) {
-            return res.status(400).json({success: false, message: "User already exists."})
+            return res.status(400).json({ success: false, message: "User already exists." })
         }
         await newUser.save();
 
@@ -64,11 +65,15 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
     const method = req.method;
+    if (method === 'POST') {
+        return POST(req, res);
+    }
+
+    const user = await checkAuthorization(req, res);
+    if (!user) { return; }
 
     if (method === 'GET') {
         return GET(req, res);
-    } else if (method === 'POST') {
-        return POST(req, res);
     } else {
         res.setHeader('Allow', ['GET', 'POST']);
         return res.status(405).json({

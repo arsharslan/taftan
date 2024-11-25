@@ -4,6 +4,7 @@ import firebase_app from "@/firebase/config";
 import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
 export default function SignUpView() {
@@ -12,6 +13,7 @@ export default function SignUpView() {
     const passwordRef = useRef<HTMLInputElement>(null);
     const [isCreatingUser, setIsCreatingUser] = useState<boolean>(false);
     const [error, setError] = useState<string>();
+    const router = useRouter();
 
     const createUser = async () => {
         setError(undefined);
@@ -29,6 +31,7 @@ export default function SignUpView() {
         const auth = getAuth(firebase_app);
         try {
             const result = await createUserWithEmailAndPassword(auth, emailRef.current?.value, passwordRef.current?.value);
+            router.push(`/onboard`);
         } catch (error) {
             if (error instanceof FirebaseError) {
                 // Handle Firebase-specific error

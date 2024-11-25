@@ -10,6 +10,7 @@ export interface IUser {
     email?: string;
     // gmail?: string;
     created_at?: Date;
+    is_admin?: boolean
 }
 
 // Define the schema

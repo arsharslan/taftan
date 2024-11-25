@@ -11,7 +11,7 @@ import FinalView from "./components/final";
 import SelectAddressView from "./components/select_address";
 
 export interface DishSelected {
-    dish_id?: string;
+    dish_id?: string | IDish;
     dish?: IDish;
     quantity: number
 }
@@ -26,25 +26,35 @@ const steps = [
 
 const OnlineOrderView = () => {
 
-    
-    const { dishesSelected, setDishesSelected, currentStep, setCurrentStep, setCheckout } = useOnlineOrderContext();
+
+    const { dishesSelected, setDishesSelected, currentStep, setCurrentStep, setCheckout, setStartDate, setPaymentMode } = useOnlineOrderContext();
     const params = useParams<{ id: string }>()
     const checkoutId: string | null = params?.id ?? null;
-    
+
     const getChechkout = async () => {
-        if (checkoutId === "0" || !checkoutId) {return;}
-        const response = await fetchCheckout({checkoutId});
+        if (checkoutId === "0" || !checkoutId) { return; }
+        const response = await fetchCheckout({ checkoutId });
         if (response.data) {
             setCheckout(response.data);
+            if (response.data.requested_delivery_date) {
+                setStartDate(new Date(response.data.requested_delivery_date));
+            }
+            if (response.data.payment_mode) {
+                setPaymentMode(response.data.payment_mode);
+            } 
+                
             if (response.data.address) {
-                setCurrentStep(2);
+                setCurrentStep(3);
             } else {
-                setCurrentStep(1);
+                setCurrentStep(2);
             }
         }
     }
 
     useEffect(() => {
+        /* if (checkoutId !== "0") {
+            setCurrentStep(2);
+        } */
         getChechkout();
     }, []);
 
@@ -55,8 +65,8 @@ const OnlineOrderView = () => {
     </>;
 }
 
-export default function OnlineOrder({params} : {params: any}) {
+export default function OnlineOrder({ params }: { params: any }) {
     return <OnlineOrderProvider>
-        <OnlineOrderView/>
+        <OnlineOrderView />
     </OnlineOrderProvider>;
 }

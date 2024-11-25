@@ -1,7 +1,19 @@
+import firebase_app from "@/firebase/config";
 import { IAddress } from "@/models/address";
 import { ICheckout } from "@/models/checkout";
 import { IDish } from "@/models/dish";
 import { IUser } from "@/models/user";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+
+const auth = getAuth(firebase_app);
+
+const getUser = new Promise<User | null>((resolve) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe();
+        resolve(user);
+    });
+});
+
 
 interface ErrorDictionary {
     [key: string]: string | string[];
@@ -67,7 +79,9 @@ async function convertResponse<T>(
 }
 
 //----------------------Headers----------------------//
-function getHeaders(isImage = false) {
+async function getHeaders(isImage = false) {
+    const user = await getUser;
+    const token = await user?.getIdToken();
     //   let token = CookiesProvider.getToken();
     /* if (token == null) {
         return {
@@ -78,14 +92,14 @@ function getHeaders(isImage = false) {
     return {
         "Content-Type": "application/json",
         Accept: "application/json",
-        //   Authorization: `${token}`,
+        ...(token && { Authorization: token }),
     } as HeadersInit;
     //   }
 }
 export async function findUser({ firebase_id }: { firebase_id: string }): Promise<ApiResponse<IUser>> {
     return convertResponse<IUser>(
         fetch(`/api/users/?firebase_id=${firebase_id}`, {
-            headers: getHeaders(),
+            headers: await getHeaders(),
         })
     );
 }
@@ -93,7 +107,7 @@ export async function findUser({ firebase_id }: { firebase_id: string }): Promis
 export async function postUser({ user }: { user: IUser }): Promise<ApiResponse<IUser>> {
     return convertResponse<IUser>(
         fetch(`/api/users/`, {
-            headers: getHeaders(),
+            headers: await getHeaders(),
             method: "POST",
             body: JSON.stringify(user)
         })
@@ -103,7 +117,7 @@ export async function postUser({ user }: { user: IUser }): Promise<ApiResponse<I
 export async function fetchDishes(): Promise<ApiResponse<IDish[]>> {
     return convertResponse<IDish[]>(
         fetch(`/api/dishes/`, {
-            headers: getHeaders(),
+            headers: await getHeaders(),
         })
     );
 }
@@ -111,7 +125,7 @@ export async function fetchDishes(): Promise<ApiResponse<IDish[]>> {
 export async function fetchAddresses({ user_id }: { user_id: string }): Promise<ApiResponse<IAddress[]>> {
     return convertResponse<IAddress[]>(
         fetch(`/api/address/?user_id=${user_id}`, {
-            headers: getHeaders(),
+            headers: await getHeaders(),
         })
     );
 }
@@ -121,7 +135,7 @@ export async function postAddress({ address }: { address: IAddress }): Promise<A
         fetch(`/api/address/`, {
             method: "POST",
             body: JSON.stringify(address),
-            headers: getHeaders(),
+            headers: await getHeaders(),
         })
     );
 }
@@ -131,7 +145,7 @@ export async function postCheckout({ checkout }: { checkout: ICheckout }): Promi
         fetch(`/api/checkout/`, {
             method: "POST",
             body: JSON.stringify(checkout),
-            headers: getHeaders(),
+            headers: await getHeaders(),
         })
     );
 }
@@ -139,7 +153,46 @@ export async function postCheckout({ checkout }: { checkout: ICheckout }): Promi
 export async function fetchCheckout({ checkoutId }: { checkoutId: string }): Promise<ApiResponse<ICheckout>> {
     return convertResponse<ICheckout>(
         fetch(`/api/checkout/${checkoutId}`, {
-            headers: getHeaders(),
+            headers: await getHeaders(),
+        })
+    );
+}
+
+export async function fetchCheckouts({ user_id, payment_mode }: { user_id: string, payment_mode?: string }): Promise<ApiResponse<ICheckout[]>> {
+    let url = `/api/checkout/?user_id=${user_id}&`;
+    if (payment_mode) {
+        url += `payment_mode=${payment_mode}&`;
+    }
+
+    return convertResponse<ICheckout[]>(
+        fetch(url, {
+            headers: await getHeaders(),
+        })
+    );
+}
+
+export async function fetchAdminCheckouts({ user_id, payment_mode }: { user_id?: string, payment_mode?: string }): Promise<ApiResponse<ICheckout[]>> {
+    let url = `/api/admin/checkout/?`;
+    if (user_id) {
+        url += `user_id=${user_id}&`;
+    }
+    if (payment_mode) {
+        url += `payment_mode=${payment_mode}&`;
+    }
+
+    return convertResponse<ICheckout[]>(
+        fetch(url, {
+            headers: await getHeaders(),
+        })
+    );
+}
+
+export async function patchCheckout({ checkout }: { checkout: ICheckout }): Promise<ApiResponse<ICheckout>> {
+    return convertResponse<ICheckout>(
+        fetch(`/api/checkout/${checkout._id}`, {
+            method: "PATCH",
+            body: JSON.stringify(checkout),
+            headers: await getHeaders(),
         })
     );
 }

@@ -5,6 +5,7 @@ import { ResponseData } from '../users';
 import Address, { IAddress } from '@/models/address';
 import mongoose from 'mongoose';
 import { ObjectId } from 'mongodb';
+import { checkAuthorization } from '@/pages/check_authorization';
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | IAddress[]>) {
     try {
@@ -72,6 +73,8 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData | IAddress[] | IAddress>) {
+    const user = await checkAuthorization(req, res);
+    if (!user) { return; }
     const method = req.method;
 
     if (method === 'GET') {

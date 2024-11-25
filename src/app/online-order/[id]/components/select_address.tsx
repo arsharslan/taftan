@@ -1,6 +1,6 @@
 import firebase_app from "@/firebase/config";
 import { IAddress } from "@/models/address"
-import { fetchAddresses, postAddress } from "@/provider/api_provider";
+import { fetchAddresses, patchCheckout, postAddress } from "@/provider/api_provider";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
@@ -11,6 +11,8 @@ import { toast, ToastContainer } from "react-toastify";
 import FieldErrorDisplay from "@/components/field_error";
 import LoadingIndicator from "@/components/loading_indicator";
 import React from "react";
+import { useParams } from "next/navigation";
+import { useOnlineOrderContext } from "../online_order_context";
 
 type AddressForm = {
     name: string;
@@ -36,6 +38,10 @@ export default function SelectAddressView() {
 
     const [addresses, setAddresses] = useState<IAddress[]>([]);
     const [open, setOpen] = useState<boolean>(false);
+    const [addressBeingSelected, setAddressBeingSelected] = useState<string>();
+    const params = useParams<{ id: string }>()
+    const checkoutId: string | null = params?.id ?? null;
+    const { checkout, setCheckout, setCurrentStep } = useOnlineOrderContext();
 
     const getAddresses = async () => {
         const response = await fetchAddresses({ user_id: localStorage.getItem("user_id") ?? "" });
@@ -68,8 +74,25 @@ export default function SelectAddressView() {
         if (response.data) {
             toast("Address added successfully!");
             getAddresses();
+            setOpen(false);
         }
         setIsAddingAddress(false);
+    }
+
+    const selectAddress = async (address: IAddress) => {
+        setAddressBeingSelected(address._id ?? undefined);
+        const response = await patchCheckout({
+            checkout: {
+                _id: checkout!._id,
+                address
+            }
+        });
+        if (response.data) {
+            console.log("successfull")
+            setCheckout(response.data);
+            setCurrentStep(3);
+        }
+        setAddressBeingSelected(undefined);
     }
 
     return <>
@@ -91,9 +114,9 @@ export default function SelectAddressView() {
 
         {addresses.map((address, index) => <div
             key={index}
-            className="overflow-hidden rounded-lg bg-gray-800 shadow-md mx-8">
+            className="overflow-hidden rounded-lg bg-gray-800 shadow-md mx-8 mb-8">
             <div className="px-4 py-5 sm:p-6">
-                <table className="min-w-full divide-y divide-gray-300 " >
+                <table className="min-w-full divide-y divide-gray-300 table-auto" >
                     {/* <thead>
                         <tr className="divide-x divide-[#DAA520]">
                             <th scope="col" className="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-0">
@@ -107,7 +130,7 @@ export default function SelectAddressView() {
                     </thead> */}
                     <tbody className="divide-y divide-[#DAA520] text-white">
                         <tr className="divide-x divide-[#DAA520]">
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
+                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0 w-0">
                                 Name
                             </td>
                             <td className="whitespace-nowrap p-4 text-sm">
@@ -159,14 +182,20 @@ export default function SelectAddressView() {
             <div className="flex">
                 <button
                     type="button"
-                    className="mx-8 mb-8 ml-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    disabled={checkout?.address?._id === address._id}
+                    onClick={() => {
+                        selectAddress(address);
+                    }}
+                    className="disabled:opacity-35 mx-8 mb-8 ml-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
-                    Select
+                    {addressBeingSelected === address._id ? <LoadingIndicator /> : checkout?.address?._id === address._id ? "Selected" : "Select"}
                 </button>
             </div>
         </div>)}
 
-        <Dialog open={open} onClose={setOpen} className="relative z-10">
+        <div className="h-8" />
+
+        <Dialog open={open} onClose={setOpen} className="relative z-10 text-gray-200">
             <DialogBackdrop
                 transition
                 className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
@@ -176,17 +205,17 @@ export default function SelectAddressView() {
                 <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <DialogPanel
                         transition
-                        className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                        className="relative transform overflow-hidden rounded-lg bg-gray-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
                     >
                         <form className="mt-2" onSubmit={handleSubmit(submit)}>
 
                             <div>
                                 <div className="text-center space-y-2">
-                                    <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                                    <DialogTitle as="h3" className="text-base font-semibold">
                                         Add Address
                                     </DialogTitle>
                                     <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium ">
                                             Name
                                         </label>
                                         <div className="mt-2">
@@ -196,13 +225,13 @@ export default function SelectAddressView() {
                                                 name="name"
                                                 type="text"
                                                 placeholder="you@example.com"
-                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.name?.message && <FieldErrorDisplay error={errors.name?.message} className="flex" />}
                                         </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
                                             Street Address
                                         </label>
                                         <div className="mt-2">
@@ -212,13 +241,13 @@ export default function SelectAddressView() {
                                                 name="street_address"
                                                 type="text"
                                                 placeholder="you@example.com"
-                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.street_address?.message && <FieldErrorDisplay error={errors.street_address?.message} className="flex" />}
                                         </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
                                             City
                                         </label>
                                         <div className="mt-2">
@@ -228,13 +257,13 @@ export default function SelectAddressView() {
                                                 name="city"
                                                 type="text"
                                                 placeholder="you@example.com"
-                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.city?.message && <FieldErrorDisplay error={errors.city?.message} className="flex" />}
                                         </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
                                             State
                                         </label>
                                         <div className="mt-2">
@@ -244,13 +273,13 @@ export default function SelectAddressView() {
                                                 name="state"
                                                 type="text"
                                                 placeholder="you@example.com"
-                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.state?.message && <FieldErrorDisplay error={errors.state?.message} className="flex" />}
                                         </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
                                             Landmark
                                         </label>
                                         <div className="mt-2">
@@ -260,13 +289,13 @@ export default function SelectAddressView() {
                                                 name="landmark"
                                                 type="text"
                                                 placeholder="you@example.com"
-                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.landmark?.message && <FieldErrorDisplay error={errors.landmark?.message} className="flex" />}
                                         </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
                                             Pin Code
                                         </label>
                                         <div className="mt-2">
@@ -276,13 +305,13 @@ export default function SelectAddressView() {
                                                 name="pin_code"
                                                 type="text"
                                                 placeholder="you@example.com"
-                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.pin_code?.message && <FieldErrorDisplay error={errors.pin_code?.message} className="flex" />}
                                         </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium text-gray-900">
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
                                             Phone Number
                                         </label>
                                         <div className="mt-2">
@@ -292,7 +321,7 @@ export default function SelectAddressView() {
                                                 name="phone_number"
                                                 type="text"
                                                 placeholder="you@example.com"
-                                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.phone_number?.message && <FieldErrorDisplay error={errors.phone_number?.message} className="flex" />}
                                         </div>

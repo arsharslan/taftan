@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { ResponseData } from "./users";
 import connectDB from "@/lib/mongodb";
 import Dessert, { IDish } from "@/models/dish";
+import { verifyIdToken } from "@/lib/firebase_admin";
+import { checkAuthorization } from "../check_authorization";
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | IDish[]>) {
     try {
@@ -21,6 +23,9 @@ export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData | IDish[]>) {
+    const user = await checkAuthorization(req, res);
+    if (!user) { return; }
+
     const method = req.method;
 
     if (method === 'GET') {
