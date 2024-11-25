@@ -6,11 +6,14 @@ import { IUser } from "@/models/user";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 
 const auth = getAuth(firebase_app);
+let user: User | null;
 
 const getUser = new Promise<User | null>((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-        unsubscribe();
-        resolve(user);
+        if (user) {
+            unsubscribe();
+            resolve(user);
+        }
     });
 });
 
@@ -80,7 +83,9 @@ async function convertResponse<T>(
 
 //----------------------Headers----------------------//
 async function getHeaders(isImage = false) {
-    const user = await getUser;
+    console.log(user);
+    user ??= await getUser;
+    console.log(user);
     const token = await user?.getIdToken();
     //   let token = CookiesProvider.getToken();
     /* if (token == null) {
@@ -97,6 +102,7 @@ async function getHeaders(isImage = false) {
     //   }
 }
 export async function findUser({ firebase_id }: { firebase_id: string }): Promise<ApiResponse<IUser>> {
+    console.log(await getHeaders());
     return convertResponse<IUser>(
         fetch(`/api/users/?firebase_id=${firebase_id}`, {
             headers: await getHeaders(),
@@ -153,6 +159,14 @@ export async function postCheckout({ checkout }: { checkout: ICheckout }): Promi
 export async function fetchCheckout({ checkoutId }: { checkoutId: string }): Promise<ApiResponse<ICheckout>> {
     return convertResponse<ICheckout>(
         fetch(`/api/checkout/${checkoutId}`, {
+            headers: await getHeaders(),
+        })
+    );
+}
+
+export async function fetchAdminCheckout({ checkoutId }: { checkoutId: string }): Promise<ApiResponse<ICheckout>> {
+    return convertResponse<ICheckout>(
+        fetch(`/api/admin/checkout/${checkoutId}`, {
             headers: await getHeaders(),
         })
     );

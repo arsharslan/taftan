@@ -1,0 +1,1 @@
+export const goldenColor = "#DAA520";

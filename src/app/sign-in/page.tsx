@@ -8,6 +8,7 @@ import { FirebaseError } from "firebase/app";
 import FieldErrorDisplay from "@/components/field_error";
 import { findUser } from "@/provider/api_provider";
 import { useRouter, useSearchParams } from "next/navigation";
+import { CookiesProvider } from "@/provider/cookies_provider";
 
 const provider = new GoogleAuthProvider();
 
@@ -74,7 +75,8 @@ export default function SignInView() {
             const response = await findUser({ firebase_id: user.uid });
             if (response.data) {
                 if (response.data._id) {
-                    localStorage.setItem("user_id", response.data._id);
+                    CookiesProvider.setUserId(response.data._id)
+                    // localStorage.setItem("user_id", response.data._id);
                 }
                 router.push(searchParams?.get("redirect") ?? "/");
             } else {
@@ -104,9 +106,12 @@ export default function SignInView() {
         try {
             const result = await signInWithEmailAndPassword(auth, emailRef.current?.value, passwordRef.current?.value);
             const response = await findUser({ firebase_id: result.user.uid });
+            console.log(response);
             if (response.data) {
                 if (response.data._id) {
-                    localStorage.setItem("user_id", response.data._id);
+                    console.log("reponse user id", response.data._id);
+                    CookiesProvider.setUserId(response.data._id);
+                    // localStorage.setItem("user_id", response.data._id);
                 }
                 router.push(searchParams?.get("redirect") ?? "/");
             } else {

@@ -9,13 +9,15 @@ import Link from "next/link";
 import { IDish } from "@/models/dish";
 import displayDate from "@/utils/display_date";
 import Image from "next/image";
+import { CookiesProvider } from "@/provider/cookies_provider";
+import { goldenColor } from "@/utils/colors";
 
 export default function OnlineOrdersView() {
 
     const [checkouts, setCheckouts] = useState<ICheckout[]>();
 
     const getCheckouts = async () => {
-        const userId = localStorage.getItem("user_id");
+        const userId = await CookiesProvider.getUserId();
 
         if (!userId) { return; }
 
@@ -36,10 +38,10 @@ export default function OnlineOrdersView() {
     return <div className="text-gray-200 flex flex-col">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         </div>
-        <div className="py-16 sm:py-24">
-            <div className="mx-auto max-w-7xl sm:px-2 lg:px-8">
-                <div className="mx-auto max-w-2xl px-4 lg:max-w-4xl lg:px-0">
-                    <Image src={"/images/taftan_logo_alt-modified.png"} alt={""} height={100} width={100} className="mr-ato mb-4" />
+        <div className="py-16 mx-16">
+            <div className="mx-auto sm:px-2 lg:px-8">
+                <div className="mx-auto px-4 lg:px-0">
+                    {/* <Image src={"/images/taftan_logo_alt-modified.png"} alt={""} height={100} width={100} className="mr-ato mb-4" /> */}
 
                     <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Checkouts Pending</h1>
                     <p className="mt-2 text-sm text-gray-500">
@@ -50,8 +52,8 @@ export default function OnlineOrdersView() {
 
             <div className="mt-16">
                 <h2 className="sr-only">Checkouts</h2>
-                <div className="mx-auto max-w-7xl sm:px-2 lg:px-8">
-                    <div className="mx-auto max-w-2xl space-y-8 sm:px-4 lg:max-w-4xl lg:px-0">
+                <div className="mx-auto sm:px-2 lg:px-8">
+                    <div className="mx-auto space-y-8 sm:px-4 lg:px-0">
                         {checkouts?.map((checkout, index) => (
                             <div
                                 key={index}
@@ -79,7 +81,7 @@ export default function OnlineOrdersView() {
                                     <div className="hidden lg:col-span-2 lg:flex lg:items-center lg:justify-end lg:space-x-4">
                                         <Link
                                             href={`online-order/${checkout._id}`}
-                                            className="flex items-center justify-center rounded-md border border-gray-300  px-2.5 py-2 text-sm font-medium shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                            className="flex items-center justify-center rounded-md border border-gray-300  px-2.5 py-2 text-sm font-medium shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                                         >
                                             <span>View Order</span>
                                         </Link>

@@ -13,6 +13,7 @@ import LoadingIndicator from "@/components/loading_indicator";
 import React from "react";
 import { useParams } from "next/navigation";
 import { useOnlineOrderContext } from "../online_order_context";
+import { CookiesProvider } from "@/provider/cookies_provider";
 
 type AddressForm = {
     name: string;
@@ -44,7 +45,7 @@ export default function SelectAddressView() {
     const { checkout, setCheckout, setCurrentStep } = useOnlineOrderContext();
 
     const getAddresses = async () => {
-        const response = await fetchAddresses({ user_id: localStorage.getItem("user_id") ?? "" });
+        const response = await fetchAddresses({ user_id: (await CookiesProvider.getUserId()) ?? "" });
         if (response.data) {
             setAddresses(response.data);
         }
@@ -61,7 +62,7 @@ export default function SelectAddressView() {
         setIsAddingAddress(true);
         const response = await postAddress({
             address: {
-                user_id: localStorage.getItem("user_id") ?? "",
+                user_id: (await CookiesProvider.getUserId()) ?? "",
                 name: data.name,
                 street_address: data.street_address,
                 city: data.city,

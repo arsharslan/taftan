@@ -32,7 +32,7 @@ export default function OrdersReceivedView() {
                 <div className="px-4 sm:px-6 lg:px-8">
                     <div className="sm:flex sm:items-center">
                         <div className="sm:flex-auto">
-                            <Image src={"/images/taftan_logo_alt-modified.png"} alt={""} height={100} width={100} className="mr-auto mb-4" />
+                            {/* <Image src={"/images/taftan_logo_alt-modified.png"} alt={""} height={100} width={100} className="mr-auto mb-4" /> */}
                             <h1 className="text-base font-semibold text-white">Checkouts Waiting for Approval</h1>
                             <p className="mt-2 text-sm text-gray-300">
                                 A list of all the checkouts for which call has been requested
@@ -59,7 +59,7 @@ export default function OrdersReceivedView() {
                                             </th>
 
                                             <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                                                <span className="sr-only">Edit</span>
+                                                <span className="sr-only">View</span>
                                             </th>
                                         </tr>
                                     </thead>
@@ -78,8 +78,8 @@ export default function OrdersReceivedView() {
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{user?.phone_number}</td>
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{checkout?.items?.reduce((x, y) => x + ((y.dish_id as IDish).price), 0) ?? ""}</td>
                                                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                                        <Link href="#" className="text-indigo-400 hover:text-indigo-300">
-                                                            Edit<span className="sr-only"></span>
+                                                        <Link href={`/orders-received/${checkout._id}`} className="text-indigo-400 hover:text-indigo-300">
+                                                            View<span className="sr-only"></span>
                                                         </Link>
                                                     </td>
                                                 </tr>

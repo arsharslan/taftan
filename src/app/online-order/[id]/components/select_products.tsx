@@ -8,6 +8,7 @@ import { fetchDishes, postCheckout } from "@/provider/api_provider";
 import { toast, ToastContainer } from "react-toastify";
 import LoadingIndicator from "@/components/loading_indicator";
 import { useRouter } from "next/navigation";
+import { CookiesProvider } from "@/provider/cookies_provider";
 
 export function SelectProductsView() {
 
@@ -32,7 +33,7 @@ export function SelectProductsView() {
         setIsCreatingCheckout(true);
         const response = await postCheckout({
             checkout: {
-                user_id: localStorage.getItem("user_id") ?? "",
+                user_id: (await CookiesProvider.getUserId()) ?? "",
                 items: dishesSelected.map((e) => {
                     return {
                         dish_id: e.dish?._id ?? undefined,
