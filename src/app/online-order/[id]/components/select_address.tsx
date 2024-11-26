@@ -112,9 +112,6 @@ export default function SelectAddressView() {
             </h2>
 
             <CustomButton text="Add Address" onClick={() => {
-                toast("Address added successfully!");
-
-                return;
                 setOpen(true);
             }} />
             {/* <button

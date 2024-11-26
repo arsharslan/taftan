@@ -262,8 +262,8 @@ export default function FinalView() {
                                             <Image
                                                 src={(product.dish_id as IDish)?.image ?? ""}
                                                 alt="dish"
-                                                height={20}
-                                                width={20}
+                                                height={64}
+                                                width={64}
                                             />
                                         </div>
 

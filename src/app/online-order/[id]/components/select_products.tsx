@@ -115,7 +115,7 @@ export function SelectProductsView() {
                                 {dish.image && <img alt={"dish"} src={dish.image ?? ""} className="size-full object-cover" />}
                             </div>
                             <div className="relative mt-4">
-                                <h3 className="text-sm font-medium text-gray-300">{dish.name}</h3>
+                                <h3 className="text-sm font-bold text-gray-300">{dish.name}</h3>
                                 <p className="mt-1 text-sm text-gray-500 text-ellipsis line-clamp-2">{dish.description}</p>
                             </div>
                             <div className="absolute inset-x-0 top-0 flex h-72 items-end justify-end overflow-hidden rounded-lg p-4">
