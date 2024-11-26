@@ -9,6 +9,7 @@ import { toast, ToastContainer } from "react-toastify";
 import LoadingIndicator from "@/components/loading_indicator";
 import { useRouter } from "next/navigation";
 import { CookiesProvider } from "@/provider/cookies_provider";
+import { CustomButton } from "@/components/custom_button";
 
 export function SelectProductsView() {
 
@@ -148,13 +149,13 @@ export function SelectProductsView() {
                                                 }
                                             })
                                         }}
-                                        className="relative flex-1 items-center rounded-l-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+                                        className="relative flex-1 items-center rounded-l-md  px-3 py-2 text-sm font-semibold ring-inset bg-black ring-golden ring-2 text-white hover:text-golden focus:z-10"
                                     >
                                         <MinusIcon className="h-4 w-4 mx-auto" />
                                     </button>
                                     <button
                                         type="button"
-                                        className="relative -ml-px flex-1 items-center bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+                                        className="relative -ml-px flex-1 items-center px-3 py-2 text-sm font-semibold ring-inset bg-black ring-golden ring-2 text-white hover:text-golden focus:z-10"
                                     >
                                         {dishesSelected.find((x) => x.dish?._id === dish._id)?.quantity}
                                     </button>
@@ -174,12 +175,13 @@ export function SelectProductsView() {
 
                                             })
                                         }}
-                                        className="relative -ml-px flex-1 items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+                                        className="relative -ml-px flex-1 items-center rounded-r-md px-3 py-2 text-sm font-semibold ring-inset bg-black ring-golden ring-2 text-white hover:text-golden focus:z-10"
                                     >
                                         <PlusIcon className="h-4 w-4 mx-auto" />
                                     </button>
                                 </span>
                                 : <div className="flex">
+                                    {/* <CustomButton text="Add to Cart"/> */}
                                     <button
 
                                         onClick={() => {
@@ -194,7 +196,7 @@ export function SelectProductsView() {
                                                 ];
                                             });
                                         }}
-                                        className="flex-1 relative flex items-center justify-center rounded-md border border-transparent bg-gray-100 px-8 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200"
+                                        className="flex-1  relative flex items-center justify-center rounded-md border border-transparent  px-8 py-2 text-sm font-medium bg-black ring-golden ring-2 text-white hover:text-golden "
                                     >
                                         Add to Cart<span className="sr-only">, {dish.name}</span>
                                     </button>
@@ -206,13 +208,14 @@ export function SelectProductsView() {
             </div>
         </div>
         {dishesSelected.length > 0 && <footer className="sticky bottom-0 py-8 ml-auto mr-8">
-            <button
+            {isCreatingCheckout ? <LoadingIndicator /> : <CustomButton text="Place Order" onClick={createCheckout} />}
+            {/* <button
                 type="button"
                 onClick={createCheckout}
                 className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
                 {isCreatingCheckout ? <LoadingIndicator /> : "Place Order"}
-            </button>
+            </button> */}
         </footer>}
         <ToastContainer
             toastStyle={{ backgroundColor: "black", color: "white" }} />

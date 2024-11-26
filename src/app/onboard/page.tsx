@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import LoadingIndicator from "@/components/loading_indicator";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
+import { CookiesProvider } from "@/provider/cookies_provider";
 
 type FormData = {
     photo: File,
@@ -66,6 +67,7 @@ export default function OnboardView() {
             }
         });
         if (response.data) {
+            CookiesProvider.setUserId(response.data._id);
             toast("Onboarding Completed");
             router.push(searchParams?.get("redirect") ?? "/");
         } else {
@@ -76,7 +78,7 @@ export default function OnboardView() {
 
     return <form className="m-16" onSubmit={handleSubmit(submitForm)}>
         <div className="sm:mr-auto sm:w-full sm:max-w-sm mb-8">
-            <Image src={"/images/taftan_logo_alt-modified.png"} alt={""} height={100} width={100} />
+            <Image src={"/images/taftan_new_logo.png"} alt={""} height={100} width={100} />
         </div>
         <div className="min-w-0 flex-1 mb-4">
             <h2 className="text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">

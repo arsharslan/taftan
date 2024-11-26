@@ -1,4 +1,5 @@
 "use client";
+import { SleekButton } from "@/components/custom_button";
 import { ICheckout } from "@/models/checkout";
 import { IDish } from "@/models/dish";
 import { IUser } from "@/models/user";
@@ -118,9 +119,8 @@ export default function OrderReceivedDetailView() {
         <footer className="sticky bottom-0 py-8 ml-auto mr-8">
             <Link
                 href={`online-order/0`}
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-                {"Confirm Order"}
+                <SleekButton text="Confirm Order" />
             </Link>
         </footer>
     </div>;

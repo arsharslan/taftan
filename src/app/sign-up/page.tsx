@@ -1,5 +1,7 @@
 "use client";
+import { SleekButton } from "@/components/custom_button";
 import FieldErrorDisplay from "@/components/field_error";
+import LoadingIndicator from "@/components/loading_indicator";
 import firebase_app from "@/firebase/config";
 import { FirebaseError } from "firebase/app";
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
@@ -46,9 +48,9 @@ export default function SignUpView() {
 
     return <>
         <div id="recaptcha-container"></div>
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="flex min-h-full flex-1 flex-col justify-start px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <Image src={"/images/taftan_logo_alt-modified.png"} alt={""} height={100} width={100} className="mx-auto" />
+                <Image src={"/images/taftan_new_logo.png"} alt={""} height={150} width={150} className="mx-auto" />
                 <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Sign up</h2>
             </div>
 
@@ -62,7 +64,7 @@ export default function SignUpView() {
                             <input
                                 ref={emailRef}
                                 required
-                                className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm/6"
+                                className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-golden sm:text-sm/6"
                             />
                         </div>
                     </div>
@@ -78,20 +80,23 @@ export default function SignUpView() {
                                 ref={passwordRef}
                                 type="password"
                                 required
-                                className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm/6"
+                                className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-golden sm:text-sm/6"
                             />
                         </div>
                     </div>
                     <div>
-                        <button
+                        {isCreatingUser ? <LoadingIndicator /> : <SleekButton
+                            onClick={createUser}
+                            text="Sign Up"
+                        />}
+                        {/* <button
                             onClick={createUser}
                             className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                         >
                             {isCreatingUser ? "Please Wait" : "Sign Up"}
-                        </button>
+                        </button> */}
                         {error && <FieldErrorDisplay error={error} />}
                     </div>
-
 
                 </div>
             </div>

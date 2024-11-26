@@ -14,6 +14,7 @@ import React from "react";
 import { useParams } from "next/navigation";
 import { useOnlineOrderContext } from "../online_order_context";
 import { CookiesProvider } from "@/provider/cookies_provider";
+import { CustomButton, SleekButton } from "@/components/custom_button";
 
 type AddressForm = {
     name: string;
@@ -54,6 +55,12 @@ export default function SelectAddressView() {
     useEffect(() => {
         getAddresses();
     }, []);
+
+    useEffect(() => {
+        reset((prev) => {
+            return { ...prev, pin_code: 0 };
+        })
+    }, [open]);
 
     const { register, reset, handleSubmit, formState: { errors } } = useForm<AddressForm>({ resolver: zodResolver(schema) });
     const [isAddingAddress, setIsAddingAddress] = useState<boolean>(false);
@@ -97,12 +104,20 @@ export default function SelectAddressView() {
     }
 
     return <>
+        <ToastContainer
+            toastStyle={{ backgroundColor: "black", color: "white" }} />
         <div className="m-16 flex">
             <h2 className="mr-auto text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">
                 Select Address
             </h2>
 
-            <button
+            <CustomButton text="Add Address" onClick={() => {
+                toast("Address added successfully!");
+
+                return;
+                setOpen(true);
+            }} />
+            {/* <button
                 type="button"
                 onClick={() => {
                     setOpen(true);
@@ -110,12 +125,12 @@ export default function SelectAddressView() {
                 className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
                 Add Address
-            </button>
+            </button> */}
         </div>
 
         {addresses.map((address, index) => <div
             key={index}
-            className="overflow-hidden rounded-lg bg-gray-800 shadow-md mx-8 mb-8">
+            className="w-1/2 overflow-hidden rounded-lg bg-gray-800 shadow-md mx-8 mb-8 mx-auto">
             <div className="px-4 py-5 sm:p-6">
                 <table className="min-w-full divide-y divide-gray-300 table-auto" >
                     {/* <thead>
@@ -142,7 +157,7 @@ export default function SelectAddressView() {
                             <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
                                 Street Address
                             </td>
-                            <td className="whitespace-nowrap p-4 text-sm">{address.street_address}</td>
+                            <td className="p-4 text-sm">{address.street_address}</td>
                         </tr>
                         <tr className="divide-x divide-[#DAA520]">
                             <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
@@ -181,7 +196,16 @@ export default function SelectAddressView() {
                 </table>
             </div>
             <div className="flex">
-                <button
+                <div className="ml-auto mx-8 mb-8">
+
+                    {addressBeingSelected === address._id ? <LoadingIndicator /> : <SleekButton
+                        onClick={() => {
+                            selectAddress(address);
+                        }}
+                        text={checkout?.address?._id === address._id ? "Selected" : "Select"}
+                    />}
+                </div>
+                {/* <button
                     type="button"
                     disabled={checkout?.address?._id === address._id}
                     onClick={() => {
@@ -190,7 +214,7 @@ export default function SelectAddressView() {
                     className="disabled:opacity-35 mx-8 mb-8 ml-auto rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                 >
                     {addressBeingSelected === address._id ? <LoadingIndicator /> : checkout?.address?._id === address._id ? "Selected" : "Select"}
-                </button>
+                </button> */}
             </div>
         </div>)}
 
@@ -199,10 +223,10 @@ export default function SelectAddressView() {
         <Dialog open={open} onClose={setOpen} className="relative z-10 text-gray-200">
             <DialogBackdrop
                 transition
-                className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+                className="fixed inset-0 bg-gray-700/50 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
             />
 
-            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto ">
                 <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <DialogPanel
                         transition
@@ -225,8 +249,7 @@ export default function SelectAddressView() {
                                                 id="name"
                                                 name="name"
                                                 type="text"
-                                                placeholder="you@example.com"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.name?.message && <FieldErrorDisplay error={errors.name?.message} className="flex" />}
                                         </div>
@@ -241,8 +264,7 @@ export default function SelectAddressView() {
                                                 id="street_address"
                                                 name="street_address"
                                                 type="text"
-                                                placeholder="you@example.com"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.street_address?.message && <FieldErrorDisplay error={errors.street_address?.message} className="flex" />}
                                         </div>
@@ -257,8 +279,7 @@ export default function SelectAddressView() {
                                                 id="city"
                                                 name="city"
                                                 type="text"
-                                                placeholder="you@example.com"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.city?.message && <FieldErrorDisplay error={errors.city?.message} className="flex" />}
                                         </div>
@@ -273,8 +294,7 @@ export default function SelectAddressView() {
                                                 id="state"
                                                 name="state"
                                                 type="text"
-                                                placeholder="you@example.com"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.state?.message && <FieldErrorDisplay error={errors.state?.message} className="flex" />}
                                         </div>
@@ -289,8 +309,7 @@ export default function SelectAddressView() {
                                                 id="landmark"
                                                 name="landmark"
                                                 type="text"
-                                                placeholder="you@example.com"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.landmark?.message && <FieldErrorDisplay error={errors.landmark?.message} className="flex" />}
                                         </div>
@@ -305,8 +324,7 @@ export default function SelectAddressView() {
                                                 id="pin_code"
                                                 name="pin_code"
                                                 type="text"
-                                                placeholder="you@example.com"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.pin_code?.message && <FieldErrorDisplay error={errors.pin_code?.message} className="flex" />}
                                         </div>
@@ -321,8 +339,7 @@ export default function SelectAddressView() {
                                                 id="phone_number"
                                                 name="phone_number"
                                                 type="text"
-                                                placeholder="you@example.com"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.phone_number?.message && <FieldErrorDisplay error={errors.phone_number?.message} className="flex" />}
                                         </div>
@@ -332,7 +349,7 @@ export default function SelectAddressView() {
                             <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                                 <button
                                     type="submit"
-                                    className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                                    className="inline-flex w-full justify-center rounded-md bg-golden ring-golden ring-2 text-black hover:text-white px-3 py-2 text-sm font-semibold  shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  sm:col-start-2"
                                 >
                                     {isAddingAddress ? <LoadingIndicator /> : "Save"}
                                 </button>
@@ -340,7 +357,7 @@ export default function SelectAddressView() {
                                     type="button"
                                     data-autofocus
                                     onClick={() => setOpen(false)}
-                                    className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                                    className="mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold  shadow-sm bg-black ring-golden ring-2 text-white hover:text-golden sm:col-start-1 sm:mt-0"
                                 >
                                     Cancel
                                 </button>
@@ -350,8 +367,5 @@ export default function SelectAddressView() {
                 </div>
             </div>
         </Dialog>
-
-        <ToastContainer
-            toastStyle={{ backgroundColor: "black", color: "white" }} />
     </>
 }

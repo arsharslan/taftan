@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "@/components/headers";
+import BackgroundImage from 'react-background-image';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -24,14 +25,31 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <html lang="en" className="h-full bg-gray-900">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
-      >
-        <Header />
+  /*   return (
+      <html lang="en" className="h-full bg-gray-900">
+        <BackgroundImage
+          placeholder={""}
+          src={"/images/hero-slider-1.jpg"}
+        >
+          <body
+            className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
+          >
+            <Header />
+            {children}
+          </body>
+        </BackgroundImage>
+      </html>
+    ); */
+
+  return (<html lang="en" className="h-full bg-gray-900 w-full bg-cover bg-center bg-no-repeat bg-fixed"
+    style={{ backgroundImage: `url('/images/hero-slider-1.jpg')`, minHeight: "100vh" }}
+  >
+    <body className={`${geistSans.variable} ${geistMono.variable}  antialiased h-full `}
+    >
+      <Header />
+      <div className="min-h-screen bg-transparent">
         {children}
-      </body>
-    </html>
-  );
+      </div>
+    </body>
+  </html>);
 }

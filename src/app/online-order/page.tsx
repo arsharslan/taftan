@@ -11,6 +11,7 @@ import displayDate from "@/utils/display_date";
 import Image from "next/image";
 import { CookiesProvider } from "@/provider/cookies_provider";
 import { goldenColor } from "@/utils/colors";
+import { CustomButton } from "@/components/custom_button";
 
 export default function OnlineOrdersView() {
 
@@ -144,9 +145,8 @@ export default function OnlineOrdersView() {
         <footer className="sticky bottom-0 py-8 ml-auto mr-8">
             <Link
                 href={`online-order/0`}
-                className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-                {"Create Order"}
+                <CustomButton text="Create Order"/>
             </Link>
         </footer>
     </div >

@@ -24,7 +24,7 @@ import {
 import { ChevronDownIcon, PhoneIcon, PlayCircleIcon } from '@heroicons/react/20/solid'
 import Image from "next/image";
 import { CookiesProvider } from '@/provider/cookies_provider'
-import { getAuth, signOut } from 'firebase/auth'
+import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 import firebase_app from '@/firebase/config'
 import LoadingIndicator from './loading_indicator'
 import { useRouter } from 'next/navigation'
@@ -37,8 +37,19 @@ const Header = () => {
     const router = useRouter();
 
     useEffect(() => {
+        setListener();
         getUser();
     }, []);
+
+    const setListener = () => {
+        const auth = getAuth(firebase_app);
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            console.log("getting user");
+            setTimeout(() => {
+                getUser();
+            }, 2000);
+        });
+    }
 
     const getUser = async () => {
         const userId = await CookiesProvider.getUserId();
@@ -55,13 +66,12 @@ const Header = () => {
     }
 
     return (
-        <header className="text-gray-300">
+        <header className="text-gray-300 bg-transparent">
             <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
                 <div className="flex lg:flex-1">
                     <Link href="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">Your Company</span>
-                        <Image src={"/images/taftan_logo_alt-modified.png"} alt={""} height={64} width={64} className="mx-auto" />
-
+                        <Image src={"/images/taftan_new_logo.png"} alt={""} height={64} width={64} className="mx-auto" />
                     </Link>
                 </div>
                 <div className="flex lg:hidden">
@@ -75,63 +85,26 @@ const Header = () => {
                     </button>
                 </div>
                 <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-                    <Popover className="relative">
-                        <PopoverButton className="flex items-center gap-x-1 text-sm/6 font-semibold ">
-                            Product
-                            <ChevronDownIcon aria-hidden="true" className="size-5 flex-none " />
-                        </PopoverButton>
-
-                        <PopoverPanel
-                            transition
-                            className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
-                        >
-                            <div className="p-4">
-                                {/* {products.map((item) => (
-                                    <div
-                                        key={item.name}
-                                        className="group relative flex items-center gap-x-6 rounded-lg p-4 text-sm/6 hover:bg-gray-50"
-                                    >
-                                        <div className="flex size-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
-                                            <item.icon aria-hidden="true" className="size-6 text-gray-600 group-hover:text-indigo-600" />
-                                        </div>
-                                        <div className="flex-auto">
-                                            <a href={item.href} className="block font-semibold text-gray-900">
-                                                {item.name}
-                                                <span className="absolute inset-0" />
-                                            </a>
-                                            <p className="mt-1 text-gray-600">{item.description}</p>
-                                        </div>
-                                    </div>
-                                ))} */}
-                            </div>
-                            {/* <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
-                                {callsToAction.map((item) => (
-                                    <a
-                                        key={item.name}
-                                        href={item.href}
-                                        className="flex items-center justify-center gap-x-2.5 p-3 text-sm/6 font-semibold text-gray-900 hover:bg-gray-100"
-                                    >
-                                        <item.icon aria-hidden="true" className="size-5 flex-none text-gray-400" />
-                                        {item.name}
-                                    </a>
-                                ))}
-                            </div> */}
-                        </PopoverPanel>
-                    </Popover>
-
-                    <a href="#" className="text-sm/6 font-semibold ">
-                        Features
-                    </a>
-                    <a href="#" className="text-sm/6 font-semibold ">
-                        Marketplace
-                    </a>
-                    <a href="#" className="text-sm/6 font-semibold ">
-                        Company
-                    </a>
+                    <Link href="/" className="text-sm/6 font-semibold ">
+                        Home
+                    </Link>
+                    <Link href="/#menu" className="text-sm/6 font-semibold ">
+                        Menus
+                    </Link>
+                    <Link href="/#about" className="text-sm/6 font-semibold ">
+                        About Us
+                    </Link>
+                    <Link href="#" className="text-sm/6 font-semibold ">
+                        Contact
+                    </Link>
+                    <Link href="#" className="text-sm/6 font-semibold ">
+                        Our Chefs
+                    </Link>
                 </PopoverGroup>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                     <button className="text-sm/6 font-semibold "
                         onClick={logOut}
+                        disabled={!userId}
                     >
                         {isLoaggingOut ? <LoadingIndicator /> : userId ? "Log Out" : "Log in"} <span aria-hidden="true">&rarr;</span>
                     </button>

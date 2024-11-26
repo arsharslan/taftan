@@ -1,6 +1,6 @@
-import { Radio, RadioGroup } from "@headlessui/react";
+import { Dialog, DialogBackdrop, DialogPanel, DialogTitle, Radio, RadioGroup } from "@headlessui/react";
 import { useOnlineOrderContext } from "../online_order_context";
-import { CheckCircleIcon, TrashIcon } from "@heroicons/react/16/solid";
+import { CheckCircleIcon, CheckIcon, TrashIcon } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import Image from "next/image";
 import { IDish } from "@/models/dish";
@@ -10,7 +10,10 @@ import FieldErrorDisplay from "@/components/field_error";
 import { patchCheckout } from "@/provider/api_provider";
 import LoadingIndicator from "@/components/loading_indicator";
 import { toast, ToastContainer } from "react-toastify";
-
+import { CustomButton, SleekButton } from "@/components/custom_button";
+import { IUser } from "@/models/user";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import { useRouter } from "next/navigation";
 
 export enum PaymentMode {
     online = "ONLINE",
@@ -22,6 +25,9 @@ export default function FinalView() {
     const { checkout, setCheckout, startDate, setStartDate, paymentMode, setPaymentMode } = useOnlineOrderContext();
     const [error, setError] = useState<string>();
     const [isConfirmingOrder, setIsConfirmingOrder] = useState<boolean>(false);
+    const [successMsg, setSuccessMsg] = useState<string>();
+
+    const router = useRouter();
 
     const confirmOrder = async () => {
         setError(undefined);
@@ -40,6 +46,7 @@ export default function FinalView() {
         if (response.data) {
             if (response.data.payment_mode === PaymentMode.contact) {
                 toast("You will be contacted soon");
+                setSuccessMsg("Your order is ready and awaiting confirmation!");
             }
             setCheckout(response.data);
         }
@@ -55,8 +62,8 @@ export default function FinalView() {
                 </h2>
                 <div className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
                     <div>
-                        <div className="border-gray-200">
-                            <div className="border-gray-200">
+                        <div className="border-golden">
+                            <div className="border-golden">
                                 <fieldset>
                                     <legend className="text-lg font-medium text-gray-200">Payment method</legend>
                                     <RadioGroup
@@ -78,7 +85,7 @@ export default function FinalView() {
                                                 is_clickable: true
                                             }
                                         ].map((deliveryMethod, index) => (
-                                            <div key={index} className="flex cursor-pointer rounded-lg border border-gray-300 p-4"
+                                            <div key={index} className="flex cursor-pointer rounded-lg border border-golden ring-golden p-4"
                                                 onClick={() => {
                                                     if (deliveryMethod.is_clickable) {
                                                         setPaymentMode(deliveryMethod.mode);
@@ -133,7 +140,7 @@ export default function FinalView() {
                                     </RadioGroup>
                                 </fieldset>
                             </div>
-                            <div className="mt-4  border-gray-200 pt-4">
+                            <div className="mt-4  border-golden pt-4">
                                 <legend className="text-lg font-medium text-gray-200">Select Date</legend>
                                 <DatePicker
                                     selected={startDate}
@@ -145,7 +152,7 @@ export default function FinalView() {
                                     minDate={new Date()}
                                     showTimeSelect
                                     dateFormat="Pp"
-                                    className="bg-transparent rounded-lg mt-4"
+                                    className="bg-transparent rounded-lg mt-4 border-golden ring-golden"
                                 />
                             </div>
                             {error && <FieldErrorDisplay error={error} />}
@@ -161,7 +168,7 @@ export default function FinalView() {
                                             readOnly
                                             value={checkout?.address?.name}
                                             type="text"
-                                            className="block w-full rounded-md border-gray-300 bg-transparent text-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            className="block w-full rounded-md bg-transparent text-gray-200 shadow-sm border-golden ring-golden sm:text-sm"
                                         />
                                     </div>
                                 </div>
@@ -175,7 +182,7 @@ export default function FinalView() {
                                             readOnly
                                             value={checkout?.address?.street_address}
                                             type="text"
-                                            className="block w-full rounded-md border-gray-300 bg-transparent text-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            className="block w-full rounded-md bg-transparent text-gray-200 shadow-sm border-golden ring-golden sm:text-sm"
                                         />
                                     </div>
                                 </div>
@@ -189,7 +196,7 @@ export default function FinalView() {
                                             readOnly
                                             value={checkout?.address?.landmark}
                                             type="text"
-                                            className="block w-full rounded-md border-gray-300 bg-transparent text-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            className="block w-full rounded-md bg-transparent text-gray-200 shadow-sm border-golden ring-golden sm:text-sm"
                                         />
                                     </div>
                                 </div>
@@ -203,7 +210,7 @@ export default function FinalView() {
                                             readOnly
                                             value={checkout?.address?.city}
                                             type="text"
-                                            className="block w-full rounded-md border-gray-300 bg-transparent text-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            className="block w-full rounded-md bg-transparent text-gray-200 shadow-sm border-golden ring-golden sm:text-sm"
                                         />
                                     </div>
                                 </div>
@@ -217,7 +224,7 @@ export default function FinalView() {
                                             readOnly
                                             value={checkout?.address?.state}
                                             type="text"
-                                            className="block w-full rounded-md border-gray-300 bg-transparent text-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            className="block w-full rounded-md  bg-transparent text-gray-200 shadow-sm border-golden ring-golden sm:text-sm"
                                         />
                                     </div>
                                 </div>
@@ -231,7 +238,7 @@ export default function FinalView() {
                                             readOnly
                                             value={checkout?.address?.pin_code}
                                             type="text"
-                                            className="block w-full rounded-md border-gray-300 bg-transparent text-gray-200 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                            className="block w-full rounded-md bg-transparent text-gray-200 shadow-sm border-golden ring-golden sm:text-sm"
                                         />
                                     </div>
                                 </div>
@@ -246,9 +253,9 @@ export default function FinalView() {
                     <div className="mt-10 lg:mt-0 text-gray-200">
                         <h2 className="text-lg font-medium text-gray-200">Order summary</h2>
 
-                        <div className="mt-4 rounded-lg border border-gray-200 shadow-sm">
+                        <div className="mt-4 rounded-lg border border-golden shadow-sm">
                             <h3 className="sr-only">Items in your cart</h3>
-                            <ul role="list" className="divide-y divide-gray-200">
+                            <ul role="list" className="divide-y divide-golden">
                                 {checkout?.items?.map((product, index) => (
                                     <li key={index} className="flex px-4 py-6 sm:px-6">
                                         <div className="shrink-0">
@@ -297,7 +304,7 @@ export default function FinalView() {
                                     </li>
                                 ))}
                             </ul>
-                            <dl className="space-y-6 border-t border-gray-200 px-4 py-6 sm:px-6">
+                            <dl className="space-y-6 border-t border-golden ring-golden px-4 py-6 sm:px-6">
                                 <div className="flex items-center justify-between">
                                     <dt className="text-sm">Subtotal</dt>
                                     <dd className="text-sm font-medium">{checkout?.items?.reduce((x, y) => x + ((y.dish_id as IDish).price), 0) ?? ""}</dd>
@@ -310,19 +317,24 @@ export default function FinalView() {
                                     <dt className="text-sm">Taxes</dt>
                                     <dd className="text-sm font-medium">$5.52</dd>
                                 </div> */}
-                                <div className="flex items-center justify-between border-t border-gray-200 pt-6">
+                                <div className="flex items-center justify-between border-t border-golden pt-6">
                                     <dt className="text-base font-medium">Total</dt>
                                     <dd className="text-base font-medium">{checkout?.items?.reduce((x, y) => x + ((y.dish_id as IDish).price), 0) ?? ""}</dd>
                                 </div>
                             </dl>
 
-                            <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
-                                <button
+                            <div className="border-t border-golden px-4 py-6 sm:px-6 flex">
+                                <div className="mx-auto">
+                                    <CustomButton
+                                        onClick={confirmOrder}
+                                        text={paymentMode === PaymentMode.contact ? "Request Call" : "Confirm Order"} />
+                                </div>
+                                {/* <button
                                     onClick={confirmOrder}
                                     className="w-full rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50"
                                 >
                                     {isConfirmingOrder ? <LoadingIndicator /> : "Confirm order"}
-                                </button>
+                                </button> */}
                             </div>
                         </div>
                     </div>
@@ -332,5 +344,55 @@ export default function FinalView() {
 
         <ToastContainer
             toastStyle={{ backgroundColor: "black", color: "white" }} />
+
+
+        <Dialog open={successMsg !== undefined} onClose={() => {
+            setSuccessMsg(undefined);
+        }} className="relative z-10">
+            <DialogBackdrop
+                transition
+                className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+            />
+
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <DialogPanel
+                        transition
+                        className="relative transform overflow-hidden rounded-lg bg-black px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                    >
+                        <div>
+                            <div className="mx-auto flex  items-center justify-center">
+                                <DotLottieReact
+                                    src="/images/wait_for_call.lottie"
+                                    loop
+                                    autoplay
+                                    className=""
+                                />
+                            </div>
+                            <div className="mt-3 text-center sm:mt-5">
+                                <DialogTitle as="h3" className="text-base font-semibold text-xl text-white">
+                                    {successMsg}
+                                </DialogTitle>
+                                <div className="mt-2">
+                                    <p className="text-sm text-gray-500">
+                                        {`Please be available on your phone number`}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-5 sm:mt-6">
+                            <SleekButton
+                                onClick={() => {
+                                    setSuccessMsg(undefined);
+                                    router.push("/online-order");
+                                }}
+                                text="Goto Checkouts"
+                            />
+
+                        </div>
+                    </DialogPanel>
+                </div>
+            </div>
+        </Dialog>
     </>;
 }

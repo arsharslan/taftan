@@ -9,6 +9,8 @@ import FieldErrorDisplay from "@/components/field_error";
 import { findUser } from "@/provider/api_provider";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CookiesProvider } from "@/provider/cookies_provider";
+import { SleekButton } from "@/components/custom_button";
+import LoadingIndicator from "@/components/loading_indicator";
 
 const provider = new GoogleAuthProvider();
 
@@ -131,9 +133,9 @@ export default function SignInView() {
 
     return <>
         <div id="recaptcha-container"></div>
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div className="flex min-h-full flex-1 flex-col justify-start px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <Image src={"/images/taftan_logo_alt-modified.png"} alt={""} height={100} width={100} className="mx-auto" />
+                <Image src={"/images/taftan_new_logo.png"} alt={""} height={150} width={150} className="mx-auto" />
                 <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-white">Sign in to your account</h2>
             </div>
 
@@ -189,7 +191,7 @@ export default function SignInView() {
                                 ref={emailRef}
                                 required
                                 autoComplete="email"
-                                className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm/6"
+                                className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-golden sm:text-sm/6"
                             />
                         </div>
                     </div>
@@ -199,11 +201,11 @@ export default function SignInView() {
                             <label htmlFor="password" className="block text-sm/6 font-medium text-white">
                                 Password
                             </label>
-                            <div className="text-sm">
+                            {/* <div className="text-sm">
                                 <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">
                                     Forgot password?
                                 </a>
-                            </div>
+                            </div> */}
                         </div>
                         <div className="mt-2">
                             <input
@@ -211,18 +213,22 @@ export default function SignInView() {
                                 type="password"
                                 required
                                 autoComplete="current-password"
-                                className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm/6"
+                                className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-golden sm:text-sm/6"
                             />
                         </div>
                     </div>
 
                     <div>
-                        <button
+                        {isVerifyingEmail ? <LoadingIndicator /> : <SleekButton
+                            onClick={signInUsingEmail}
+                            text="Sign In"
+                        />}
+                        {/* <button
                             onClick={signInUsingEmail}
                             className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                         >
                             {isVerifyingEmail ? "Please Wait" : "Sign in"}
-                        </button>
+                        </button> */}
                         {error && <FieldErrorDisplay error={error} />}
                     </div>
 
@@ -256,10 +262,12 @@ export default function SignInView() {
 
             <p className="mt-10 text-center text-sm/6 text-gray-400">
                 Not a member?{' '}
-                <Link href="/sign-up" className="font-semibold text-indigo-400 hover:text-indigo-300">
+                <Link href="/sign-up" className="font-semibold text-golden hover:text-white">
                     Sign Up
                 </Link>
             </p>
+            <div className="h-8" />
+
         </div>
     </>
 }

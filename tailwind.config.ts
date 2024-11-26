@@ -12,7 +12,8 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        golden: "#DAA520"
+        golden: "#DAA520",
+        buttonColor: "#d9b78c"
       },
     },
   },
