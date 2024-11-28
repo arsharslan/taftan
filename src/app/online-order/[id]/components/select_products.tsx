@@ -104,8 +104,40 @@ export function SelectProductsView() {
                 ))}
             </ol>
         </nav> */}
-        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-300">Select your dish</h2>
+        <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6  lg:max-w-7xl lg:px-8">
+            <div className="">
+                <ul className="list-disc border rounded-lg border-golden p-8 text-white space-y-2">
+                    <li>
+                        Taftan operates on a pre-booked, high-quality food delivery model, focusing on traditional Mughlai, Chinese and Indian cuisine. Customers are required to place orders 24 hours in advance through WhatsApp, phone calls, or our website. This ensures every dish is freshly prepared using premium ingredients to maintain authenticity and flavor.
+                    </li>
+                    <br />
+                    <li>
+                        Our offerings include a carefully curated menu featuring items like Mutton Biryani, Chicken Biryani, Mutton Korma, Nihari, Kebabs, and desserts such as Zarda and Kheer. Each dish comes with clear weight specifications, ensuring transparency and customer satisfaction.
+                    </li>
+                    <br />
+
+                    <li>
+                        We cater to a variety of customer needs, from individual meals to larger group orders for special occasions. Delivery is available through our network or via delivery partners, with additional charges based on location.
+                    </li>
+                    <br />
+
+                    <li>
+                        To enhance convenience, we also provide ready-to-cook options like marinated fish, chicken, and kebab paste, allowing customers to enjoy restaurant-quality food at home.
+                    </li>
+                    <br />
+
+                    <li>
+                        Taftan ensures compliance with the highest hygiene and safety standards, as evidenced by our FSSAI certification. Our registered trademark further establishes our brand's credibility and commitment to excellence.
+                    </li>
+                    <br />
+
+                    <li>
+                        By emphasizing quality, freshness, and convenience, Taftan’s model combines traditional culinary values with modern customer preferences, making it a trusted name in pre-booked online food services.
+                    </li>
+                </ul>
+            </div>
+
+            <h2 className="mt-8 text-2xl font-bold text-gray-300">Select your dish</h2>
 
             <div className="mt-8 grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
                 {dishes?.map((dish, index) => (
@@ -207,17 +239,19 @@ export function SelectProductsView() {
                 ))}
             </div>
         </div>
-        {dishesSelected.length > 0 && <footer className="sticky bottom-0 py-8 ml-auto mr-8">
-            {isCreatingCheckout ? <LoadingIndicator /> : <CustomButton text="Place Order" onClick={createCheckout} />}
-            {/* <button
+        {
+            dishesSelected.length > 0 && <footer className="sticky bottom-0 py-8 ml-auto mr-8">
+                {isCreatingCheckout ? <LoadingIndicator /> : <CustomButton text="Place Order" onClick={createCheckout} />}
+                {/* <button
                 type="button"
                 onClick={createCheckout}
                 className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
                 {isCreatingCheckout ? <LoadingIndicator /> : "Place Order"}
             </button> */}
-        </footer>}
+            </footer>
+        }
         <ToastContainer
             toastStyle={{ backgroundColor: "black", color: "white" }} />
-    </div>;
+    </div >;
 }

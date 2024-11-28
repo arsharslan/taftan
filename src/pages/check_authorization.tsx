@@ -1,6 +1,7 @@
+"use server";
 import { NextApiRequest, NextApiResponse } from "next";
 import { ResponseData } from "./api/users";
-import { verifyIdToken } from "@/lib/firebase_admin";
+import { verifyIdToken } from "@/pages/firebase_admin";
 
 export const checkAuthorization = async (req: NextApiRequest, res: NextApiResponse<ResponseData>) => {
     const token = req.headers.authorization;
