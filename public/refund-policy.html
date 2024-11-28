@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 
+    - primary meta tags
+  -->
+  <title>Taftan- Each Bite Tells a Story</title>
+  <meta name="title" content="TAFTAN- Amazing & Delicious Food">
+  <meta name="description" content="This is a Restaurant html website made by shaz">
+
+  <!-- 
+    - favicon
+  -->
+  <link rel="shortcut icon" href="./taftan_logo_alt-modified.png" type="image/svg+xml">
+
+  <!-- 
+    - google font link
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Forum&display=swap" rel="stylesheet">
+
+  <!-- 
+    - custom css link
+  -->
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- 
+    - preload images
+  -->
+  <link rel="preload" as="image" href="./images/hero-slider-1.jpg">
+  <link rel="preload" as="image" href="./images/hero-slider-2.jpg">
+  <link rel="preload" as="image" href="./images/hero-slider-3.jpg">
+
+</head>
+
+<body id="top">
+
+  <!-- 
+    - #PRELOADER
+  -->
+
+  <div class="preload" data-preaload>
+    <div class="circle"></div>
+    <p class="text">taftan</p>
+  </div>
+
+
+
+
+
+  <!-- 
+    - #TOP BAR
+  -->
+
+  <div class="topbar">
+    <div class="container">
+
+      <address class="topbar-item">
+        <div class="icon">
+          <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+        </div>
+
+        <span class="span">
+          A-1/702 M I Rustle Court, Gomtinagar Ext-6, Shaheed Path. Lucknow 226010
+          U.P. India
+        </span>
+      </address>
+
+      <div class="separator"></div>
+
+      <div class="topbar-item item-2">
+        <div class="icon">
+          <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+        </div>
+
+        <span class="span">Daily : 8.00 am to 10.00 pm</span>
+      </div>
+
+      <a href="tel:+11234567890" class="topbar-item link">
+        <div class="icon">
+          <ion-icon name="call-outline" aria-hidden="true"></ion-icon>
+        </div>
+
+        <span class="span">7697333333</span>
+      </a>
+
+      <div class="separator"></div>
+
+      <a href="mailto:www.taftans.com" class="topbar-item link">
+        <div class="icon">
+          <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+        </div>
+
+        <span class="span">www.taftans.com</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- 
+    - #HEADER
+  -->
+
+  <header class="header" data-header>
+    <div class="container">
+
+      <a href="#" class="logo">
+        <img src="./images/taftan_new_logo.png" width="80" height="40" alt="Taftan - Home">
+      </a>
+
+      <nav class="navbar" data-navbar>
+
+        <button class="close-btn" aria-label="close menu" data-nav-toggler>
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+
+        <a href="#" class="logo">
+          <img src="./images/taftan_new_logo.png" width="160" height="50" alt="Taftan - Home">
+        </a>
+
+        <ul class="navbar-list">
+
+          <li class="navbar-item">
+            <a href="index.html" class="navbar-link hover-underline">
+              <div class="separator"></div>
+
+              <span class="span">Home</span>
+            </a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#menu" class="navbar-link hover-underline">
+              <div class="separator"></div>
+
+              <span class="span">Menus</span>
+            </a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="about-us.html" class="navbar-link hover-underline  ">
+              <div class="separator"></div>
+
+              <span class="span">About Us</span>
+            </a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#" class="navbar-link hover-underline">
+              <div class="separator"></div>
+
+              <span class="span">Our Chefs</span>
+            </a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="contactus.html" class="navbar-link hover-underline">
+              <div class="separator"></div>
+
+              <span class="span">Contact</span>
+            </a>
+          </li>
+
+        </ul>
+
+        <div class="text-center">
+          <p class="headline-1 navbar-title">Visit Us</p>
+
+          <address class="body-4">
+            A-1/702 M I Rustle Court, Gomtinagar Ext-6, Shaheed Path. Lucknow 226010
+            <br>
+            U.P. India
+          </address>
+
+          <p class="body-4 navbar-text">Open: 9.30 am - 2.30pm</p>
+
+          <a href="mailto:booking@taftan.com" class="body-4 sidebar-link">booking@taftan.com</a>
+
+          <div class="separator"></div>
+
+          <p class="contact-label">Booking Request</p>
+
+          <a href="tel:+88123123456" class="body-1 contact-number hover-underline">
+            +917697333333
+          </a>
+        </div>
+
+      </nav>
+
+      <a href="/online-order" class="btn btn-secondary">
+        <span class="text text-1">Online Order</span>
+
+        <span class="text text-2" aria-hidden="true">Online Order</span>
+      </a>
+
+      <button class="nav-open-btn" aria-label="open menu" data-nav-toggler>
+        <span class="line line-1"></span>
+        <span class="line line-2"></span>
+        <span class="line line-3"></span>
+      </button>
+
+      <div class="overlay" data-nav-toggler data-overlay></div>
+
+    </div>
+  </header>
+
+
+
+
+
+  <main>
+    <article>
+
+ 
+ <!-- refund policy -->
+ <section class="section refund-policy text-center" aria-labelledby="refund-label" id="refund-policy" style="margin-top: 150px;">
+  <div class="container">
+    <div class="refund-content">
+      <p class="label-2 section-subtitle" id="refund-label">Refund Policy</p>
+      <h2 class="headline-1 section-title">Your Trust, Our Priority</h2>
+      <p class="section-text">
+        At Taftan, we strive to ensure every customer has a delightful experience. In case of any issues, our refund policy outlines the process and timelines clearly.
+      </p>
+
+      <div class="refund-cards">
+        <!-- Card 1: Order Cancellations -->
+        <div class="refund-card">
+          <h3 class="refund-card-title">Order Cancellations</h3>
+          <p class="refund-card-text">
+            <strong>Refund Eligibility:</strong> Cancellations made within 2 hours of placing the order are eligible for a full refund.
+          </p>
+          <p class="refund-card-text">
+            <strong>Non-refundable:</strong> Cancellations after 2 hours are not eligible as the preparation process starts.
+          </p>
+        </div>
+
+        <!-- Card 2: Product Quality Issues -->
+        <div class="refund-card">
+          <h3 class="refund-card-title">Product Quality Issues</h3>
+          <p class="refund-card-text">
+            <strong>Reporting Time:</strong> Report quality, packaging, or incorrect item issues within 2 hours of delivery.
+          </p>
+          <p class="refund-card-text">
+            <strong>Evidence Required:</strong> Complaints must include photographic evidence for review.
+          </p>
+          <p class="refund-card-text">
+            <strong>Decision:</strong> Upon verification, we may offer a refund or replacement at our discretion.
+          </p>
+        </div>
+
+        <!-- Card 3: Delivery Issues -->
+        <div class="refund-card">
+          <h3 class="refund-card-title">Delivery Issues</h3>
+          <p class="refund-card-text">
+            <strong>Delays:</strong> Refunds for delays exceeding 3 hours from the scheduled delivery time will be considered.
+          </p>
+          <p class="refund-card-text">
+            <strong>Incorrect Address/Contact:</strong> Refunds are not applicable for orders undelivered due to incorrect details provided by the customer.
+          </p>
+        </div>
+
+        <!-- Card 4: Refund TAT -->
+        <div class="refund-card">
+          <h3 class="refund-card-title">Refund TAT (Turnaround Time)</h3>
+          <p class="refund-card-text">
+            <strong>Processing Time:</strong> Approved refunds will be processed within 7–10 business days.
+          </p>
+          <p class="refund-card-text">
+            <strong>Mode of Refund:</strong> Refunds will be credited to the original payment method used during the order (e.g., bank account, UPI, credit/debit card).
+          </p>
+        </div>
+      </div>
+
+      <p class="contact-info">
+        For any queries or assistance, please contact our team via WhatsApp or call us at <a href="tel:+91769733333" class="contact-link refund">+91 76973 33333</a>.
+      </p>
+    </div>
+
+  
+  </div>
+</section>
+
+
+
+    </article> 
+  </main>
+
+
+
+
+  <!-- 
+    - #FOOTER
+  -->
+
+  <footer class="footer section has-bg-image text-center" style="background-image: url('./images/footer-bg.jpg')">
+    <div class="container">
+
+      <div class="footer-top grid-list">
+
+        <div class="footer-brand has-before has-after">
+
+          <a href="#" class="logo">
+            <img src="./images/taftan_new_logo.png" width="160" height="50" loading="lazy" alt="taftan home">
+          </a>
+
+          <address class="body-4">
+            A-1/702 M I Rustle Court, Gomtinagar Ext-6, Shaheed Path. Lucknow 226010
+            U.P. India
+          </address>
+
+          <a href="mailto:booking@taftan.com" class="body-4 contact-link">booking@taftan.com</a>
+
+          <a href="tel:+88123123456" class="body-4 contact-link">Booking Request : +917697333333</a>
+
+          <p class="body-4">
+            Open : 09:00 am - 01:00 pm
+          </p>
+
+          <div class="wrapper">
+            <div class="separator"></div>
+            <div class="separator"></div>
+            <div class="separator"></div>
+          </div>
+
+          <p class="title-1">Get News & Offers</p>
+
+          <p class="label-1">
+            Subscribe us & Get <span class="span">25% Off.</span>
+          </p>
+
+          <form action="" class="input-wrapper">
+            <div class="icon-wrapper">
+              <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+
+              <input type="email" name="email_address" placeholder="Your email" autocomplete="off" class="input-field">
+            </div>
+
+            <button type="submit" class="btn btn-secondary">
+              <span class="text text-1">Subscribe</span>
+
+              <span class="text text-2" aria-hidden="true">Subscribe</span>
+            </button>
+          </form>
+
+        </div>
+
+        <ul class="footer-list">
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Home</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Menus</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">About Us</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Our Chefs</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Contact</a>
+          </li>
+
+        </ul>
+
+        <ul class="footer-list">
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Facebook</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Instagram</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Twitter</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Youtube</a>
+          </li>
+
+          <li>
+            <a href="/sign-in?redirect=orders-received" class="label-2 footer-link hover-underline">Admin Login</a>
+          </li>
+
+        </ul>
+
+      </div>
+
+      <div class="footer-bottom">
+
+        <p class="copyright">
+          &copy; 2024 Taftan. All Rights Reserved | Crafted by Shazia Afreen
+        </p>
+
+      </div>
+
+    </div>
+  </footer>
+
+
+
+
+
+  <!-- 
+    - #BACK TO TOP
+  -->
+
+  <a href="#top" class="back-top-btn" aria-label="back to top" data-back-top-btn>
+    <ion-icon name="chevron-up" aria-hidden="true"></ion-icon>
+  </a>
+
+
+
+
+
+  <!-- 
+    - custom js link
+  -->
+  <script src="./script.js"></script>
+
+  <!-- 
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>
