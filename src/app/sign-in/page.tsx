@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { ConfirmationResult, getAuth, GoogleAuthProvider, RecaptchaVerifier, signInWithEmailAndPassword, signInWithPhoneNumber, signInWithPopup } from "firebase/auth";
 import firebase_app from "@/firebase/config";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FirebaseError } from "firebase/app";
 import FieldErrorDisplay from "@/components/field_error";
@@ -14,7 +14,7 @@ import LoadingIndicator from "@/components/loading_indicator";
 
 const provider = new GoogleAuthProvider();
 
-export default function SignInView() {
+const SignInView = () => {
     const auth = getAuth(firebase_app);
     const [appVerifier, setAppVerifier] = useState<RecaptchaVerifier>();
 
@@ -270,4 +270,10 @@ export default function SignInView() {
 
         </div>
     </>
+}
+
+export default function SignIn() {
+    return <Suspense>
+        <SignInView />
+    </Suspense>
 }

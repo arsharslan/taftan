@@ -127,7 +127,7 @@ export function SelectProductsView() {
                     <br />
 
                     <li>
-                        Taftan ensures compliance with the highest hygiene and safety standards, as evidenced by our FSSAI certification. Our registered trademark further establishes our brand's credibility and commitment to excellence.
+                        {"Taftan ensures compliance with the highest hygiene and safety standards, as evidenced by our FSSAI certification. Our registered trademark further establishes our brand's credibility and commitment to excellence."}
                     </li>
                     <br />
 

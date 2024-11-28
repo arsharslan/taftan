@@ -5,7 +5,7 @@ import Address, { IAddress } from '@/models/address';
 import mongoose from 'mongoose';
 import { ObjectId } from 'mongodb';
 import Checkout, { ICheckout } from '@/models/checkout';
-import { checkAuthorization } from '@/pages/check_authorization';
+import { checkAuthorization } from '@/lib/check_authorization';
 import Dessert from '@/models/dish';
 import { ResponseData } from '../../users';
 import User from '@/models/user';

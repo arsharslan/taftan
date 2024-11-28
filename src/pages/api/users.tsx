@@ -2,7 +2,7 @@ import connectDB from '@/lib/mongodb';
 import clientPromise from '@/lib/mongodb';
 import User from '@/models/user';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { checkAuthorization } from '../check_authorization';
+import { checkAuthorization } from '../../lib/check_authorization';
 
 
 export type ResponseData = {

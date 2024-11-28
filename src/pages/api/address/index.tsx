@@ -5,7 +5,7 @@ import { ResponseData } from '../users';
 import Address, { IAddress } from '@/models/address';
 import mongoose from 'mongoose';
 import { ObjectId } from 'mongodb';
-import { checkAuthorization } from '@/pages/check_authorization';
+import { checkAuthorization } from '@/lib/check_authorization';
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | IAddress[]>) {
     try {

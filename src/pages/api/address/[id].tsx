@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { ResponseData } from "../users";
 import Address, { IAddress } from "@/models/address";
 import connectDB from "@/lib/mongodb";
-import { checkAuthorization } from "@/pages/check_authorization";
+import { checkAuthorization } from "@/lib/check_authorization";
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | IAddress>) {
     try {

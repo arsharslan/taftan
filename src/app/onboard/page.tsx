@@ -2,7 +2,7 @@
 import firebase_app from "@/firebase/config";
 import { findUser, postUser } from "@/provider/api_provider";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -31,13 +31,13 @@ const schema = z.object({
     phone_number: z.string().min(10).max(10)
 });
 
-export default function OnboardView() {
+const OnboardView = () => {
     const [firebaseId, setFirebaseId] = useState<string>();
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({ resolver: zodResolver(schema) });
     const searchParams = useSearchParams();
     const router = useRouter();
-    
+
     useEffect(() => {
         const auth = getAuth(firebase_app);
         const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -209,4 +209,10 @@ export default function OnboardView() {
         <ToastContainer
             toastStyle={{ backgroundColor: "black", color: "white" }} />
     </form>;
+}
+
+export default function Onboard() {
+    return <Suspense>
+        <OnboardView />
+    </Suspense>
 }
