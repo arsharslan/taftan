@@ -1,4 +1,5 @@
 // lib/firebaseAdmin.js
+"use server";
 import admin from 'firebase-admin';
 
 if (!admin.apps.length && process.env.FIREBASE_ADMIN_CREDENTIALS) {

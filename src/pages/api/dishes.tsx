@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { ResponseData } from "./users";
 import connectDB from "@/lib/mongodb";
 import Dessert, { IDish } from "@/models/dish";
-import { verifyIdToken } from "@/lib/firebase_admin";
 import { checkAuthorization } from "../check_authorization";
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | IDish[]>) {
