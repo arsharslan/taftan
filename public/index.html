@@ -111,7 +111,7 @@
     <div class="container">
 
       <a href="#" class="logo">
-        <img src="./images/taftan_new_logo.png" width="160" height="50" alt="Grilli - Home">
+        <img src="./images/taftan_new_logo.png" width="80" height="40" alt="Taftan - Home">
       </a>
 
       <nav class="navbar" data-navbar>
@@ -121,7 +121,7 @@
         </button>
 
         <a href="#" class="logo">
-          <img src="./images/taftan_new_logo.png" width="160" height="50" alt="Grilli - Home">
+          <img src="./images/taftan_new_logo.png" width="160" height="50" alt="Taftan - Home">
         </a>
 
         <ul class="navbar-list">
@@ -143,7 +143,7 @@
           </li>
 
           <li class="navbar-item">
-            <a href="#about" class="navbar-link hover-underline">
+            <a href="about-us.html" class="navbar-link hover-underline">
               <div class="separator"></div>
 
               <span class="span">About Us</span>
@@ -159,7 +159,7 @@
           </li>
 
           <li class="navbar-item">
-            <a href="#" class="navbar-link hover-underline">
+            <a href="contactus.html" class="navbar-link hover-underline">
               <div class="separator"></div>
 
               <span class="span">Contact</span>
@@ -310,13 +310,32 @@
         </button>
 
         <a href="#" class="hero-btn has-after">
-          <img src="./images/hero-icon.png" width="48" height="48" alt="booking icon">
+          <img src="./images/smartphone-black.png" width="48" height="48" alt="booking icon">
 
-          <span class="label-2 text-center span">Book A Table</span>
+          <span class="label-2 text-center span">Contact Us Now</span>
         </a>
 
       </section>
 
+
+<!-- pop up dailogue box -->
+
+<div class="popup-wrapper" id="custom-popup" style="display: none;" onclick="closeOnOutsideClick(event)">
+  <div class="popup-card">
+    <button class="popup-close-btn" onclick="closePopup()">×</button>
+    <h2 class="popup-heading">🍽️ Your Culinary Adventure Awaits!</h2>
+    <p class="popup-text">
+      Experience excellence with **Taftan Catering**. Since 2013, we’ve been serving irresistible flavors across Mughlai, Indian, Chinese, and Continental cuisines. Ready to order?
+    </p>
+    <p class="popup-highlight">
+      Don’t miss our exclusive offers for a limited time!
+    </p>
+    <div class="popup-actions">
+      <a href="/menu" class="popup-btn popup-btn-primary">📜 Explore Menu</a>
+      <a href="tel:+917697333333" class="popup-btn popup-btn-secondary">📞 Call to Order</a>
+    </div>
+  </div>
+</div>
 
 
 
@@ -333,8 +352,7 @@
           <h2 class="headline-1 section-title">We Offer Top Notch</h2>
 
           <p class="section-text">
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry lorem Ipsum has been the industrys
-            standard dummy text ever.
+            Experience the pinnacle of taste and luxury with our top-notch cuisines, crafted to delight even the most refined palates.
           </p>
 
           <ul class="grid-list">
@@ -420,78 +438,6 @@
 
 
 
-
-
-      <!-- 
-        - #ABOUT
-      -->
-
-      <section class="section about text-center" aria-labelledby="about-label" id="about">
-        <div class="container">
-
-          <div class="about-content">
-
-            <p class="label-2 section-subtitle" id="about-label">Our Story</p>
-
-            <h2 class="headline-1 section-title">Each Bite Tells a Story</h2>
-
-            <p class="section-text">
-              Taftan Catering is a premier catering company established in 2013, specializing in a diverse range of
-              cuisines including Mughlai, Indian, Chinese, and Continental. With a commitment to excellence and a
-              passion for culinary artistry, Taftan Catering is dedicated to delivering exceptional dining experiences
-              for all types of events, from grand weddings to intimate family gatherings. </p>
-
-            <div class="contact-label">Book Through Call</div>
-
-            <a href="tel:+804001234567" class="body-1 contact-number hover-underline">+917697333333</a>
-
-            <a href="#" class="btn btn-primary">
-              <span class="text text-1">Read More</span>
-
-              <span class="text text-2" aria-hidden="true">Read More</span>
-            </a>
-
-          </div>
-
-          <figure class="about-banner">
-
-            <img src="./images/catering.jpeg" width="570" height="570" loading="lazy" alt="about banner" class="w-100"
-              data-parallax-item data-parallax-speed="1">
-
-            <div class="abs-img abs-img-1 has-before" data-parallax-item data-parallax-speed="1.75">
-              <img src="./images/team.jpeg" width="285" height="285" loading="lazy" alt="" class="w-100">
-            </div>
-
-            <div class="abs-img abs-img-2 has-before">
-              <img src="./images/2013-transparent.png" width="133" height="134" loading="lazy" alt="">
-            </div>
-
-          </figure>
-
-          <img src="./images/shape-3.png" width="197" height="194" loading="lazy" alt="" class="shape">
-
-        </div>
-      </section>
-
-      <!--
-mission vision      
--->
-
-      <!-- Vision Section -->
-      <section class="section vision text-center" aria-labelledby="vision-label" id="vision">
-        <div class="container d-flex align-items-center">
-          <div class="vision-content text-left">
-            <p class="label-2 section-subtitle" id="vision-label">Our Vision</p>
-            <h2 class="headline-1 section-title">To be recognized as the leading catering service</h2>
-            <p class="section-text">
-              To be recognized as the leading catering service that brings together the best flavors from different
-              culinary traditions, ensuring memorable dining experiences for every occasion.
-            </p>
-          </div>
-        </div>
-      </section>
-
-
       <!-- Gallery Section -->
       <section class="section gallery text-center" aria-labelledby="gallery-label" id="gallery">
         <div class="container">
@@ -512,21 +458,7 @@ mission vision
         </div>
       </section>
 
-      <!-- Mission Section -->
-      <section class="section mission text-center" aria-labelledby="mission-label" id="mission">
-        <div class="container d-flex align-items-center flex-row-reverse">
-          <div class="mission-content text-left">
-            <p class="label-2 section-subtitle" id="mission-label">Our Mission</p>
-            <h2 class="headline-1 section-title">Creating Memorable Dining Experiences</h2>
-            <p class="section-text">
-              To create delicious and visually stunning meals that cater to the unique preferences of our clients while
-              providing outstanding service that exceeds expectations.
-            </p>
-          </div>
-        </div>
-      </section>
-
-
+    
 
 
 
@@ -778,210 +710,6 @@ mission vision
 
         </div>
       </section>
-
-
-      <!-- The Team Section -->
-      <section class="section team text-center has-bg-image"
-        style="background-image: url('./images/testimonial-bg.jpg');" aria-label="team">
-        <div class="container">
-          <p class="label-2 section-subtitle">The Team Behind Taftan</p>
-          <h2 class="headline-1 section-title">Meet Our Experts</h2>
-
-          <div class="team-members">
-            <!-- Siraj Ahmed Siddiqui -->
-            <div class="team-member">
-              <img src="./images/founder.png" width="100" height="100" loading="lazy" alt="Siraj Ahmed Siddiqui"
-                class="team-img">
-              <p class="label-2 team-name">Siraj Ahmed Siddiqui</p>
-              <p class="team-title">Founder and Culinary Expert</p>
-              <p class="team-desc">With over 48 years of experience in the food and beverage industry, Siraj Ahmed
-                Siddiqui is known for his passion for creating exceptional dining experiences...</p>
-            </div>
-
-            <!-- Dr. Imran Ahmed Siddiqui -->
-            <div class="team-member">
-              <img src="./images/imran.jpeg" width="100" height="100" loading="lazy" alt="Dr. Imran Ahmed Siddiqui"
-                class="team-img">
-              <p class="label-2 team-name">Dr. Imran Ahmed Siddiqui</p>
-              <p class="team-title">CEO, Business Excellence Professional</p>
-              <p class="team-desc">With 20 years of experience in business excellence, Dr. Imran Ahmed Siddiqui’s
-                expertise in strategic planning plays a vital role in enhancing company performance...</p>
-            </div>
-
-            <!-- Fahad Iqbal -->
-            <div class="team-member">
-              <img src="./images/fahad.png" width="100" height="100" loading="lazy" alt="Fahad Iqbal" class="team-img">
-              <p class="label-2 team-name">Fahad Iqbal</p>
-              <p class="team-title">COO, Catering Services Expert</p>
-              <p class="team-desc">With 15 years in catering services, Fahad Iqbal ensures that every occasion is
-                executed flawlessly with the highest standards of quality and service...</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
-
-
-      <!-- 
-        - #TESTIMONIALS
-      -->
-
-      <section class="section testi text-center has-bg-image"
-        style="background-image: url('./images/testimonial-bg.jpg')" aria-label="testimonials">
-        <div class="container">
-
-          <div class="quote">”</div>
-
-          <p class="headline-2 testi-text">
-            At Taftan Catering, we believe that every meal is an opportunity to create cherished memories. Join us for a
-            culinary experience where each bite tells a story!
-          </p>
-
-          <div class="wrapper">
-            <div class="separator"></div>
-            <div class="separator"></div>
-            <div class="separator"></div>
-          </div>
-
-          <div class="profile">
-            <img src="./images/founder.png" width="100" height="100" loading="lazy" alt="Sam Jhonson" class="img">
-
-            <p class="label-2 profile-name">Founder and Culinary Expert</p>
-          </div>
-
-        </div>
-      </section>
-
-
-
-
-
-      <!-- 
-        - #RESERVATION
-      -->
-
-      <section class="reservation">
-        <div class="container">
-
-          <div class="form reservation-form bg-black-10">
-
-            <form action="" class="form-left">
-
-              <h2 class="headline-1 text-center">Online Reservation</h2>
-
-              <p class="form-text text-center">
-                Booking request <a href="tel:+88123123456" class="link">+917697333333</a>
-                or fill out the order form
-              </p>
-
-              <div class="input-wrapper">
-                <input type="text" name="name" placeholder="Your Name" autocomplete="off" class="input-field">
-
-                <input type="tel" name="phone" placeholder="Phone Number" autocomplete="off" class="input-field">
-              </div>
-
-              <div class="input-wrapper">
-
-                <div class="icon-wrapper">
-                  <ion-icon name="person-outline" aria-hidden="true"></ion-icon>
-
-                  <select name="person" class="input-field">
-                    <option value="1-person">1 Person</option>
-                    <option value="2-person">2 Person</option>
-                    <option value="3-person">3 Person</option>
-                    <option value="4-person">4 Person</option>
-                    <option value="5-person">5 Person</option>
-                    <option value="6-person">6 Person</option>
-                    <option value="7-person">7 Person</option>
-                  </select>
-
-                  <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
-                </div>
-
-                <div class="icon-wrapper">
-                  <ion-icon name="calendar-clear-outline" aria-hidden="true"></ion-icon>
-
-                  <input type="date" name="reservation-date" class="input-field">
-
-                  <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
-                </div>
-
-                <div class="icon-wrapper">
-                  <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
-
-                  <select name="person" class="input-field">
-                    <option value="08:00am">08 : 00 am</option>
-                    <option value="09:00am">09 : 00 am</option>
-                    <option value="010:00am">10 : 00 am</option>
-                    <option value="011:00am">11 : 00 am</option>
-                    <option value="012:00am">12 : 00 am</option>
-                    <option value="01:00pm">01 : 00 pm</option>
-                    <option value="02:00pm">02 : 00 pm</option>
-                    <option value="03:00pm">03 : 00 pm</option>
-                    <option value="04:00pm">04 : 00 pm</option>
-                    <option value="05:00pm">05 : 00 pm</option>
-                    <option value="06:00pm">06 : 00 pm</option>
-                    <option value="07:00pm">07 : 00 pm</option>
-                    <option value="08:00pm">08 : 00 pm</option>
-                    <option value="09:00pm">09 : 00 pm</option>
-                    <option value="10:00pm">10 : 00 pm</option>
-                  </select>
-
-                  <ion-icon name="chevron-down" aria-hidden="true"></ion-icon>
-                </div>
-
-              </div>
-
-              <textarea name="message" placeholder="Message" autocomplete="off" class="input-field"></textarea>
-
-              <button type="submit" class="btn btn-secondary">
-                <span class="text text-1">Book A Table</span>
-
-                <span class="text text-2" aria-hidden="true">Book A Table</span>
-              </button>
-
-            </form>
-
-            <div class="form-right text-center" style="background-image: url('./images/form-pattern.png')">
-
-              <h2 class="headline-1 text-center">Contact Us</h2>
-
-              <p class="contact-label">Booking Request</p>
-
-              <a href="tel:+88123123456" class="body-1 contact-number hover-underline">+917697333333</a>
-
-              <div class="separator"></div>
-
-              <p class="contact-label">Location</p>
-
-              <address class="body-4">
-                A-1/702 M I Rustle Court, Gomtinagar Ext-6, Shaheed Path. <br>
-                Lucknow 226010, U.P. India
-
-              </address>
-
-              <p class="contact-label">Lunch Time</p>
-
-              <p class="body-4">
-                Monday to Sunday <br>
-                11.00 am - 2.30pm
-              </p>
-
-              <p class="contact-label">Dinner Time</p>
-
-              <p class="body-4">
-                Monday to Sunday <br>
-                05.00 pm - 10.00pm
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
 
 
 

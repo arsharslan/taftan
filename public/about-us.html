@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- 
+    - primary meta tags
+  -->
+  <title>Taftan- Each Bite Tells a Story</title>
+  <meta name="title" content="TAFTAN- Amazing & Delicious Food">
+  <meta name="description" content="This is a Restaurant html website made by shaz">
+
+  <!-- 
+    - favicon
+  -->
+  <link rel="shortcut icon" href="./taftan_logo_alt-modified.png" type="image/svg+xml">
+
+  <!-- 
+    - google font link
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700&family=Forum&display=swap" rel="stylesheet">
+
+  <!-- 
+    - custom css link
+  -->
+  <link rel="stylesheet" href="./style.css">
+
+  <!-- 
+    - preload images
+  -->
+  <link rel="preload" as="image" href="./images/hero-slider-1.jpg">
+  <link rel="preload" as="image" href="./images/hero-slider-2.jpg">
+  <link rel="preload" as="image" href="./images/hero-slider-3.jpg">
+
+</head>
+
+<body id="top">
+
+  <!-- 
+    - #PRELOADER
+  -->
+
+  <div class="preload" data-preaload>
+    <div class="circle"></div>
+    <p class="text">taftan</p>
+  </div>
+
+
+
+
+
+  <!-- 
+    - #TOP BAR
+  -->
+
+  <div class="topbar">
+    <div class="container">
+
+      <address class="topbar-item">
+        <div class="icon">
+          <ion-icon name="location-outline" aria-hidden="true"></ion-icon>
+        </div>
+
+        <span class="span">
+          A-1/702 M I Rustle Court, Gomtinagar Ext-6, Shaheed Path. Lucknow 226010
+          U.P. India
+        </span>
+      </address>
+
+      <div class="separator"></div>
+
+      <div class="topbar-item item-2">
+        <div class="icon">
+          <ion-icon name="time-outline" aria-hidden="true"></ion-icon>
+        </div>
+
+        <span class="span">Daily : 8.00 am to 10.00 pm</span>
+      </div>
+
+      <a href="tel:+11234567890" class="topbar-item link">
+        <div class="icon">
+          <ion-icon name="call-outline" aria-hidden="true"></ion-icon>
+        </div>
+
+        <span class="span">7697333333</span>
+      </a>
+
+      <div class="separator"></div>
+
+      <a href="mailto:www.taftans.com" class="topbar-item link">
+        <div class="icon">
+          <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+        </div>
+
+        <span class="span">www.taftans.com</span>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- 
+    - #HEADER
+  -->
+
+  <header class="header" data-header>
+    <div class="container">
+
+      <a href="#" class="logo">
+        <img src="./images/taftan_new_logo.png" width="80" height="40" alt="Taftan - Home">
+      </a>
+
+      <nav class="navbar" data-navbar>
+
+        <button class="close-btn" aria-label="close menu" data-nav-toggler>
+          <ion-icon name="close-outline" aria-hidden="true"></ion-icon>
+        </button>
+
+        <a href="#" class="logo">
+          <img src="./images/taftan_new_logo.png" width="160" height="50" alt="Taftan - Home">
+        </a>
+
+        <ul class="navbar-list">
+
+          <li class="navbar-item">
+            <a href="index.html" class="navbar-link hover-underline">
+              <div class="separator"></div>
+
+              <span class="span">Home</span>
+            </a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#menu" class="navbar-link hover-underline">
+              <div class="separator"></div>
+
+              <span class="span">Menus</span>
+            </a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#about" class="navbar-link hover-underline active">
+              <div class="separator"></div>
+
+              <span class="span">About Us</span>
+            </a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#" class="navbar-link hover-underline">
+              <div class="separator"></div>
+
+              <span class="span">Our Chefs</span>
+            </a>
+          </li>
+
+          <li class="navbar-item">
+            <a href="#" class="navbar-link hover-underline">
+              <div class="separator"></div>
+
+              <span class="span">Contact</span>
+            </a>
+          </li>
+
+        </ul>
+
+        <div class="text-center">
+          <p class="headline-1 navbar-title">Visit Us</p>
+
+          <address class="body-4">
+            A-1/702 M I Rustle Court, Gomtinagar Ext-6, Shaheed Path. Lucknow 226010
+            <br>
+            U.P. India
+          </address>
+
+          <p class="body-4 navbar-text">Open: 9.30 am - 2.30pm</p>
+
+          <a href="mailto:booking@taftan.com" class="body-4 sidebar-link">booking@taftan.com</a>
+
+          <div class="separator"></div>
+
+          <p class="contact-label">Booking Request</p>
+
+          <a href="tel:+88123123456" class="body-1 contact-number hover-underline">
+            +917697333333
+          </a>
+        </div>
+
+      </nav>
+
+      <a href="/online-order" class="btn btn-secondary">
+        <span class="text text-1">Online Order</span>
+
+        <span class="text text-2" aria-hidden="true">Online Order</span>
+      </a>
+
+      <button class="nav-open-btn" aria-label="open menu" data-nav-toggler>
+        <span class="line line-1"></span>
+        <span class="line line-2"></span>
+        <span class="line line-3"></span>
+      </button>
+
+      <div class="overlay" data-nav-toggler data-overlay></div>
+
+    </div>
+  </header>
+
+
+
+
+
+  <main>
+    <article>
+
+
+
+
+
+      <!-- 
+        - #ABOUT
+      -->
+
+      <section class="section about text-center" aria-labelledby="about-label" id="about" style="margin-top: 50px;">
+        <div class="container">
+
+          <div class="about-content">
+
+            <p class="label-2 section-subtitle" id="about-label">Our Story</p>
+
+            <h2 class="headline-1 section-title">Each Bite Tells a Story</h2>
+
+            <p class="section-text">
+              Taftan Catering is a premier catering company established in 2013, specializing in a diverse range of
+              cuisines including Mughlai, Indian, Chinese, and Continental. With a commitment to excellence and a
+              passion for culinary artistry, Taftan Catering is dedicated to delivering exceptional dining experiences
+              for all types of events, from grand weddings to intimate family gatherings. </p>
+
+            <div class="contact-label">Book Through Call</div>
+
+            <a href="tel:+804001234567" class="body-1 contact-number hover-underline">+917697333333</a>
+
+            <a href="#" class="btn btn-primary">
+              <span class="text text-1">Read More</span>
+
+              <span class="text text-2" aria-hidden="true">Read More</span>
+            </a>
+
+          </div>
+
+          <figure class="about-banner">
+
+            <img src="./images/catering.jpeg" width="570" height="570" loading="lazy" alt="about banner" class="w-100"
+              data-parallax-item data-parallax-speed="1">
+
+            <div class="abs-img abs-img-1 has-before" data-parallax-item data-parallax-speed="1.75">
+              <img src="./images/team.jpeg" width="285" height="285" loading="lazy" alt="" class="w-100">
+            </div>
+
+            <div class="abs-img abs-img-2 has-before">
+              <img src="./images/2013-transparent.png" width="133" height="134" loading="lazy" alt="">
+            </div>
+
+          </figure>
+
+          <img src="./images/shape-3.png" width="197" height="194" loading="lazy" alt="" class="shape">
+
+        </div>
+      </section>
+
+      <!--
+mission vision      
+-->
+
+      <!-- Vision Section -->
+      <section class="section vision text-center" aria-labelledby="vision-label" id="vision" style="margin-top: -100px;">
+        <div class="container d-flex align-items-center">
+          <div class="vision-content text-left">
+            <p class="label-2 section-subtitle" id="vision-label">Our Vision</p>
+            <h2 class="headline-1 section-title">To be recognized as the leading catering service</h2>
+            <p class="section-text">
+              To be recognized as the leading catering service that brings together the best flavors from different
+              culinary traditions, ensuring memorable dining experiences for every occasion.
+            </p>
+          </div>
+        </div>
+      </section>
+
+          <!-- 
+        - #TESTIMONIALS
+      -->
+
+      <section class="section testi text-center has-bg-image"
+        style="background-image: url('./images/testimonial-bg.jpg')" aria-label="testimonials">
+        <div class="container">
+
+          <div class="quote">”</div>
+
+          <p class="headline-2 testi-text">
+            At Taftan Catering, we believe that every meal is an opportunity to create cherished memories. Join us for a
+            culinary experience where each bite tells a story!
+          </p>
+
+          <div class="wrapper">
+            <div class="separator"></div>
+            <div class="separator"></div>
+            <div class="separator"></div>
+          </div>
+
+          <div class="profile">
+            <img src="./images/founder.png" width="100" height="100" loading="lazy" alt="Sam Jhonson" class="img">
+
+            <p class="label-2 profile-name">Founder and Culinary Expert</p>
+          </div>
+
+        </div>
+      </section> 
+
+      <!-- Mission Section -->
+      <section class="section mission text-center" aria-labelledby="mission-label" id="mission">
+        <div class="container d-flex align-items-center flex-row-reverse">
+          <div class="mission-content text-left">
+            <p class="label-2 section-subtitle" id="mission-label">Our Mission</p>
+            <h2 class="headline-1 section-title">Creating Memorable Dining Experiences</h2>
+            <p class="section-text">
+              To create delicious and visually stunning meals that cater to the unique preferences of our clients while
+              providing outstanding service that exceeds expectations.
+            </p>
+          </div>
+        </div>
+      </section>
+
+
+
+
+      <!-- The Team Section -->
+      <section class="section team text-center has-bg-image"
+        style="background-image: url('./images/testimonial-bg.jpg');" aria-label="team">
+        <div class="container">
+          <p class="label-2 section-subtitle">The Team Behind Taftan</p>
+          <h2 class="headline-1 section-title">Meet Our Experts</h2>
+
+          <div class="team-members">
+            <!-- Siraj Ahmed Siddiqui -->
+            <div class="team-member">
+              <img src="./images/founder.png" width="100" height="100" loading="lazy" alt="Siraj Ahmed Siddiqui"
+                class="team-img">
+              <p class="label-2 team-name">Siraj Ahmed Siddiqui</p>
+              <p class="team-title">Founder and Culinary Expert</p>
+              <p class="team-desc">With over 48 years of experience in the food and beverage industry, Siraj Ahmed
+                Siddiqui is known for his passion for creating exceptional dining experiences...</p>
+            </div>
+
+            <!-- Dr. Imran Ahmed Siddiqui -->
+            <div class="team-member">
+              <img src="./images/imran.jpeg" width="100" height="100" loading="lazy" alt="Dr. Imran Ahmed Siddiqui"
+                class="team-img">
+              <p class="label-2 team-name">Dr. Imran Ahmed Siddiqui</p>
+              <p class="team-title">CEO, Business Excellence Professional</p>
+              <p class="team-desc">With 20 years of experience in business excellence, Dr. Imran Ahmed Siddiqui’s
+                expertise in strategic planning plays a vital role in enhancing company performance...</p>
+            </div>
+
+            <!-- Fahad Iqbal -->
+            <div class="team-member">
+              <img src="./images/fahad.png" width="100" height="100" loading="lazy" alt="Fahad Iqbal" class="team-img">
+              <p class="label-2 team-name">Fahad Iqbal</p>
+              <p class="team-title">COO, Catering Services Expert</p>
+              <p class="team-desc">With 15 years in catering services, Fahad Iqbal ensures that every occasion is
+                executed flawlessly with the highest standards of quality and service...</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+
+  
+
+    </article> 
+  </main>
+
+
+
+
+  <!-- 
+    - #FOOTER
+  -->
+
+  <footer class="footer section has-bg-image text-center" style="background-image: url('./images/footer-bg.jpg')">
+    <div class="container">
+
+      <div class="footer-top grid-list">
+
+        <div class="footer-brand has-before has-after">
+
+          <a href="#" class="logo">
+            <img src="./images/taftan_new_logo.png" width="160" height="50" loading="lazy" alt="taftan home">
+          </a>
+
+          <address class="body-4">
+            A-1/702 M I Rustle Court, Gomtinagar Ext-6, Shaheed Path. Lucknow 226010
+            U.P. India
+          </address>
+
+          <a href="mailto:booking@taftan.com" class="body-4 contact-link">booking@taftan.com</a>
+
+          <a href="tel:+88123123456" class="body-4 contact-link">Booking Request : +917697333333</a>
+
+          <p class="body-4">
+            Open : 09:00 am - 01:00 pm
+          </p>
+
+          <div class="wrapper">
+            <div class="separator"></div>
+            <div class="separator"></div>
+            <div class="separator"></div>
+          </div>
+
+          <p class="title-1">Get News & Offers</p>
+
+          <p class="label-1">
+            Subscribe us & Get <span class="span">25% Off.</span>
+          </p>
+
+          <form action="" class="input-wrapper">
+            <div class="icon-wrapper">
+              <ion-icon name="mail-outline" aria-hidden="true"></ion-icon>
+
+              <input type="email" name="email_address" placeholder="Your email" autocomplete="off" class="input-field">
+            </div>
+
+            <button type="submit" class="btn btn-secondary">
+              <span class="text text-1">Subscribe</span>
+
+              <span class="text text-2" aria-hidden="true">Subscribe</span>
+            </button>
+          </form>
+
+        </div>
+
+        <ul class="footer-list">
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Home</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Menus</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">About Us</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Our Chefs</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Contact</a>
+          </li>
+
+        </ul>
+
+        <ul class="footer-list">
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Facebook</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Instagram</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Twitter</a>
+          </li>
+
+          <li>
+            <a href="#" class="label-2 footer-link hover-underline">Youtube</a>
+          </li>
+
+          <li>
+            <a href="/sign-in?redirect=orders-received" class="label-2 footer-link hover-underline">Admin Login</a>
+          </li>
+
+        </ul>
+
+      </div>
+
+      <div class="footer-bottom">
+
+        <p class="copyright">
+          &copy; 2024 Taftan. All Rights Reserved | Crafted by Shazia Afreen
+        </p>
+
+      </div>
+
+    </div>
+  </footer>
+
+
+
+
+
+  <!-- 
+    - #BACK TO TOP
+  -->
+
+  <a href="#top" class="back-top-btn active" aria-label="back to top" data-back-top-btn>
+    <ion-icon name="chevron-up" aria-hidden="true"></ion-icon>
+  </a>
+
+
+
+
+
+  <!-- 
+    - custom js link
+  -->
+  <script src="./script.js"></script>
+
+  <!-- 
+    - ionicon link
+  -->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+
+</body>
+
+</html>
