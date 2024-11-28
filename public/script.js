@@ -168,3 +168,32 @@ window.addEventListener("mousemove", function (event) {
     }
 
 });
+
+// dialog box code here
+
+
+  // Show popup
+
+  // Show popup
+  function showPopup() {
+    document.getElementById("custom-popup").style.display = "flex";
+  }
+
+  // Close popup
+  function closePopup() {
+    document.getElementById("custom-popup").style.display = "none";
+  }
+
+  // Close popup on clicking outside the card
+  function closeOnOutsideClick(event) {
+    const card = document.querySelector(".popup-card");
+    if (!card.contains(event.target)) {
+      closePopup();
+    }
+  }
+
+  // Automatically show the popup after a delay
+  setTimeout(() => {
+    showPopup();
+  }, 5000); // 5 seconds delay
+

@@ -323,7 +323,7 @@
   }
   
   .section-subtitle::after {
-    content: url('../images/separator.svg');
+    content: url('images/separator.svg');
     display: block;
     width: 100px;
     margin-inline: auto;
@@ -991,13 +991,13 @@
     left: 50%;
     transform: translateX(-50%);
     width: 140px;
-    background-image: url('../images/img-pattern.svg');
+    background-image: url('public/images/img-pattern.svg');
     background-repeat: repeat;
   }
   
   .about .abs-img-2::before {
     inset: 0;
-    background-image: url('../images/badge-2-bg.png');
+    background-image: url('public/images/badge-2-bg.png');
     background-repeat: no-repeat;
     background-size: contain;
     animation: rotate360 15s linear infinite;
@@ -2329,3 +2329,109 @@
     }
   }
   
+
+  /* dialogue pop up */
+
+
+  /* Wrapper to cover the screen */
+  .popup-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+
+  /* Card for popup */
+  .popup-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px 25px;
+    max-width: 350px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    transform: translateY(0);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+
+  /* Add 3D hover effect */
+  .popup-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Close button */
+  .popup-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    color: black;
+    cursor: pointer;
+  }
+
+  /* Heading */
+  .popup-heading {
+    font-size: 2.1rem;
+    color: black;
+    margin-bottom: 10px;
+    font-weight: bold;
+  }
+
+  /* Text */
+  .popup-text {
+    font-size: 1.2rem;
+    color: #444;
+    margin-bottom: 15px;
+    line-height: 1.4;
+  }
+
+  .popup-highlight {
+    font-size: 1.5rem;
+    color: goldenrod;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  /* Buttons */
+  .popup-btn {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 1.1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    margin: 5px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .popup-btn-primary {
+    background: goldenrod;
+    color: black;
+    border: 1px solid goldenrod;
+  }
+
+  .popup-btn-primary:hover {
+    background: black;
+    color: white;
+    border: 1px solid black;
+  }
+
+  .popup-btn-secondary {
+    background: black;
+    color: white;
+    border: 1px solid black;
+  }
+
+  .popup-btn-secondary:hover {
+    background: goldenrod;
+    color: black;
+    border: 1px solid goldenrod;
+  }
+
