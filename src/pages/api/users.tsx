@@ -56,7 +56,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
         }
         await newUser.save();
 
-        res.status(201).json({ success: true, data: newUser });
+        res.status(201).json(newUser);
     } catch (error) {
         console.error('POST Error:', error);
         res.status(500).json({ success: false, message: `Failed to create user ${error}` });

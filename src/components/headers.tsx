@@ -44,7 +44,6 @@ const Header = () => {
     const setListener = () => {
         const auth = getAuth(firebase_app);
         const unsubscribe = onAuthStateChanged(auth, (user) => {
-            console.log("getting user");
             setTimeout(() => {
                 getUser();
             }, 2000);

@@ -5,7 +5,7 @@ export function middleware(request: NextRequest) {
     console.log("user id", userId);
     console.log("pathname", request.nextUrl.pathname);
 
-    if (request.nextUrl.pathname !== "/" && !request.nextUrl.pathname.startsWith("/sign-up") && !request.nextUrl.pathname.startsWith("/onboard") && !request.nextUrl.pathname.startsWith("/images") && !request.nextUrl.pathname.startsWith("/style.css") && !request.nextUrl.pathname.startsWith("/script.js")) {
+    if (request.nextUrl.pathname !== "/" && allowedUrls.every((x) => !request.nextUrl.pathname.startsWith(x))) {
         if (userId && request.nextUrl.pathname.startsWith('/sign-in')) {
             return Response.redirect(new URL('/', request.url))
         }
@@ -15,6 +15,17 @@ export function middleware(request: NextRequest) {
         }
     }
 }
+
+const allowedUrls = [
+    // "/",
+    "/sign-up",
+    "/onboard",
+    "/images",
+    "/style.css",
+    "/script.js",
+    "/about-us",
+    "/contact-us"
+];
 
 export const config = {
     matcher: ['/((?!api|_next/static|_next/image|svg|.*\\.png$).*)'],
