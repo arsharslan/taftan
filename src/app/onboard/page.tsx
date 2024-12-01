@@ -14,6 +14,7 @@ import LoadingIndicator from "@/components/loading_indicator";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CookiesProvider } from "@/provider/cookies_provider";
+import { SleekButton } from "@/components/custom_button";
 
 type FormData = {
     photo: File,
@@ -66,8 +67,8 @@ const OnboardView = () => {
                 phone_number: data.phone_number
             }
         });
-        if (response.data) {
-            CookiesProvider.setUserId(response.data._id);
+        if (response.data?._id) {
+            CookiesProvider.setUserId(response.data?._id);
             toast("Onboarding Completed");
             router.push(searchParams?.get("redirect") ?? "/");
         } else {
@@ -196,13 +197,16 @@ const OnboardView = () => {
             {/* <button type="button" className="text-sm/6 font-semibold text-white">
                 Cancel
             </button> */}
-            <button
+            <div>
+                {isSubmitting ? <LoadingIndicator /> : <SleekButton text="Save" type="submit" />}
+            </div>
+            {/* <button
                 type="submit"
                 className="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
             >
                 {isSubmitting ? <LoadingIndicator />
                     : "Save"}
-            </button>
+            </button> */}
         </div>
 
         <div className="h-4" />
