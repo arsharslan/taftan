@@ -15,6 +15,7 @@ import { useParams } from "next/navigation";
 import { useOnlineOrderContext } from "../online_order_context";
 import { CookiesProvider } from "@/provider/cookies_provider";
 import { CustomButton, SleekButton } from "@/components/custom_button";
+import Autocomplete from "@/components/autocomplete";
 
 type AddressForm = {
     name: string;
@@ -62,7 +63,7 @@ export default function SelectAddressView() {
         })
     }, [open]);
 
-    const { register, reset, handleSubmit, formState: { errors } } = useForm<AddressForm>({ resolver: zodResolver(schema) });
+    const { register, reset, handleSubmit, formState: { errors }, setValue } = useForm<AddressForm>({ resolver: zodResolver(schema) });
     const [isAddingAddress, setIsAddingAddress] = useState<boolean>(false);
 
     const submit = async (data: AddressForm) => {
@@ -253,9 +254,85 @@ export default function SelectAddressView() {
                                     </div>
                                     <div>
                                         <label htmlFor="email" className="text-left block text-sm/6 font-medium">
+                                            Pin Code
+                                        </label>
+                                        <div className="mt-2">
+                                            <Autocomplete
+                                                id="pin_code"
+                                                name="pin_code"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                registerValue={register("pin_code", {
+                                                    required: true, valueAsNumber: true
+                                                })}
+                                                onSelect={(place) => {
+                                                    const state = place?.address_components?.filter(
+                                                        (x) =>
+                                                            x.types.includes(
+                                                                "administrative_area_level_1"
+                                                            )
+                                                    )[0]?.long_name;
+                                                    const pin = place?.address_components?.filter(
+                                                        (x) => x.types.includes("postal_code")
+                                                    )[0]?.long_name;
+                                                    const city = place?.address_components?.filter(
+                                                        (x) => x.types.includes("locality")
+                                                    )[0]?.long_name;
+                                                    const street = place?.address_components?.filter(
+                                                        (x) => x.types.includes("sublocality_level_1")
+                                                    )[0]?.long_name;
+                                                    setValue("city", city ?? "", {
+                                                        shouldValidate: true,
+                                                    });
+                                                    setValue("state", state ?? "", {
+                                                        shouldValidate: true,
+                                                    });
+                                                    setValue("pin_code", +(pin ?? ""), {
+                                                        shouldValidate: true,
+                                                    });
+                                                    setValue("street_address", (street ?? ""), {
+                                                        shouldValidate: true,
+                                                    });
+                                                }}
+                                            />
+                                            {errors.pin_code?.message && <FieldErrorDisplay error={errors.pin_code?.message} className="flex" />}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
                                             Street Address
                                         </label>
                                         <div className="mt-2">
+                                            {/* <Autocomplete
+                                                id="street_address"
+                                                name="street_address"
+                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+                                                registerValue={register("street_address", {
+                                                    required: true
+                                                })}
+                                                onSelect={(place) => {
+                                                    const state = place?.address_components?.filter(
+                                                        (x) =>
+                                                            x.types.includes(
+                                                                "administrative_area_level_1"
+                                                            )
+                                                    )[0]?.long_name;
+                                                    const pin = place?.address_components?.filter(
+                                                        (x) => x.types.includes("postal_code")
+                                                    )[0]?.long_name;
+                                                    const city = place?.address_components?.filter(
+                                                        (x) => x.types.includes("locality")
+                                                    )[0]?.long_name;
+                                                    setValue("city", city ?? "", {
+                                                        shouldValidate: true,
+                                                    });
+                                                    setValue("state", state ?? "", {
+                                                        shouldValidate: true,
+                                                    });
+                                                    setValue("pin_code", +(pin ?? ""), {
+                                                        shouldValidate: true,
+                                                    });
+                                                }}
+                                            /> */}
                                             <input
                                                 {...register("street_address", { required: true })}
                                                 id="street_address"
@@ -266,6 +343,7 @@ export default function SelectAddressView() {
                                             {errors.street_address?.message && <FieldErrorDisplay error={errors.street_address?.message} className="flex" />}
                                         </div>
                                     </div>
+
                                     <div>
                                         <label htmlFor="email" className="text-left block text-sm/6 font-medium">
                                             City
@@ -309,21 +387,6 @@ export default function SelectAddressView() {
                                                 className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
                                             />
                                             {errors.landmark?.message && <FieldErrorDisplay error={errors.landmark?.message} className="flex" />}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
-                                            Pin Code
-                                        </label>
-                                        <div className="mt-2">
-                                            <input
-                                                {...register("pin_code", { required: true, valueAsNumber: true })}
-                                                id="pin_code"
-                                                name="pin_code"
-                                                type="text"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                            />
-                                            {errors.pin_code?.message && <FieldErrorDisplay error={errors.pin_code?.message} className="flex" />}
                                         </div>
                                     </div>
                                     <div>
