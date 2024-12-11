@@ -24,7 +24,11 @@ const allowedUrls = [
     "/style.css",
     "/script.js",
     "/about-us",
-    "/contact-us"
+    "/contact-us",
+    "/catering-venue",
+    "/catering-corporate",
+    "/catering-home",
+    "/caterimg-wedding"
 ];
 
 export const config = {
