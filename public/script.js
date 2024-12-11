@@ -197,3 +197,19 @@ window.addEventListener("mousemove", function (event) {
     showPopup();
   }, 5000); // 5 seconds delay
 
+// code for whatsapp integration
+
+function sendToWhatsApp() {
+    const name = document.getElementById('name').value;
+    const phone = document.getElementById('phone').value;
+    const person = document.getElementById('person').value;
+    const date = document.getElementById('reservation-date').value;
+    const time = document.getElementById('reservation-time').value;
+    const message = document.getElementById('message').value;
+
+    const messageText = `Contact Request:\nName: ${name}\nPhone: ${phone}\nNumber of People: ${person}\nContact Date: ${date}\nContact Time: ${time}\nMessage: ${message}`;
+    
+    const whatsappLink = `https://wa.me/917697333333?text=${encodeURIComponent(messageText)}`;
+    
+    window.open(whatsappLink, '_blank');
+  }
