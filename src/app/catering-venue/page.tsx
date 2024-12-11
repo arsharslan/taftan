@@ -31,7 +31,7 @@ const OutdoorCatering = () => {
       {/* Long Description Section */}
       <div className={styles.longDescription}>
         <p>
-        Step into a world where the aroma of perfectly baked Taftan bread fills the air, tantalizing your taste buds and leaving your guests raving for more. Whether it's a wedding, corporate gala, birthday bash, or a cozy family gathering, our Venue Catering for Taftan promises to transform every event into a feast of flavors and elegance.
+        Step into a world where the aroma of perfectly baked Taftan bread fills the air, tantalizing your taste buds and leaving your guests raving for more. Whether it&apos;s a wedding, corporate gala, birthday bash, or a cozy family gathering, our Venue Catering for Taftan promises to transform every event into a feast of flavors and elegance.
 <br></br><br />
 Why Choose Taftan for Your Event?
 <br /><br />
