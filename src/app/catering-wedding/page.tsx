@@ -122,7 +122,7 @@ const WeddingCatering = () => {
         </div>
         <div className={styles.formGroup}>
           <label htmlFor="message">Message:</label>
-          <textarea id="message" name="message" placeholder="Additional details or requirements" rows="4"></textarea>
+          <textarea id="message" name="message" placeholder="Additional details or requirements" rows={4}></textarea>
         </div>
         <button type="submit" className={styles.submitButton}>Submit</button>
       </form>
