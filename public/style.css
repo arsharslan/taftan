@@ -2494,3 +2494,33 @@
   text-decoration: underline;
   font-size: large;
 }
+
+
+/* Dropdown menu styling */
+.dropdown {
+  display: none;
+  position: absolute;
+  background: #000; /* Black background */
+  border: 2px solid #bbb074; /* Golden border */
+  border-radius: 5px;
+  padding: 0.5rem;
+ 
+}
+
+.navbar-item:hover .dropdown {
+  display: block;
+}
+
+.dropdown-item {
+  margin: 12px;
+  padding: 0.5rem;
+}
+
+.dropdown-item .navbar-link {
+  color: #f6f6f6; /* Golden text */
+  text-decoration: none;
+}
+
+.dropdown-item .navbar-link:hover {
+  color: #e6c200; /* Highlighted golden */
+}
