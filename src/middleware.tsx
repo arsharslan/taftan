@@ -28,7 +28,8 @@ const allowedUrls = [
     "/catering-venue",
     "/catering-corporate",
     "/catering-home",
-    "/caterimg-wedding"
+    "/catering-wedding",
+    "/culinary-delights"
 ];
 
 export const config = {

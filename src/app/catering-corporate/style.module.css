@@ -44,6 +44,7 @@
   transform: scale(105%);
   box-shadow: 0 10px 20px rgba(230, 194, 0, 0.3); /* Subtle golden shadow */
 }
+
 /* Card Grid Section */
 .cardGrid {
   display: grid;
@@ -128,4 +129,64 @@
   font-family: 'Forum', cursive;
   font-size: 18px;
   line-height: 1.6;
+  
+}
+
+/* Booking Form */
+.bookingForm {
+  background: rgba(0, 0, 0, 0.8); /* Transparent black */
+  border: 2px solid #e6c200; /* Golden border */
+  border-radius: 10px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  color: #f6f6f6;
+  font-family: 'Forum', cursive;
+  text-align: center;
+ 
+}
+
+.bookingForm .formGroup {
+  margin-bottom: 1.5rem;
+}
+
+.bookingForm label {
+  display: block;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: #e6c200;
+}
+
+.bookingForm input,
+.bookingForm select,
+.bookingForm textarea {
+  width: 60%;
+  padding: 0.8rem;
+  border: 1px solid #e6c200;
+  border-radius: 5px;
+  background: #000;
+  color: #f6f6f6;
+  font-size: 1rem;
+}
+
+.bookingForm input:focus,
+.bookingForm select:focus,
+.bookingForm textarea:focus {
+  outline: none;
+  box-shadow: 0 0 5px #e6c200;
+}
+
+.bookingForm button {
+  background: #e6c200;
+  color: #000;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.bookingForm button:hover {
+  background: #fff;
+  color: #000;
 }

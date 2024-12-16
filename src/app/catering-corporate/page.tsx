@@ -36,24 +36,24 @@ const CorporateCatering = () => {
         </p>
         <br />
         <p>
-          🔥 Exceptional Culinary Excellence  
+          🔥 <strong>Exceptional Culinary Excellence</strong>  
           Our signature Taftan bread, paired with a selection of gourmet dishes, is designed to please the most discerning palates. From light appetizers to elaborate main courses, every dish is crafted to perfection.  
         </p>
         <br />
         <p>
-          🎉 Tailored for Corporate Vibes  
+          🎉 <strong>Tailored for Corporate Vibes</strong>  
           We understand the importance of creating an ambiance that aligns with your company’s ethos. Our catering solutions are tailored to reflect professionalism, elegance, and attention to detail.  
         </p>
         <br />
         <p>
-          💎 Unparalleled Service  
+          💎 <strong>Unparalleled Service</strong>  
           Our experienced staff ensures seamless service, allowing you to focus on your guests and objectives. From setup to cleanup, we handle it all with precision and care.  
         </p>
         <br />
         <img src="/images/long-description.jpeg" alt="Corporate Event Setup" className={styles.roundedImage} />
         <br />
         <p>
-          🌟 Menus Designed for Success  
+          🌟 <strong>Menus Designed for Success</strong>  
           Be it formal sit-down meals or dynamic buffet setups, our diverse menu options cater to all corporate occasions. We ensure every detail is executed flawlessly, leaving your guests impressed and delighted.  
         </p>
         <br />
@@ -76,6 +76,51 @@ const CorporateCatering = () => {
           </div>
         ))}
       </div>
+
+      {/* Booking Form Section */}
+      <h2 className={styles.sectiontitle}>Book Your Catering Experience</h2>
+      <form className={styles.bookingForm}>
+        <div className={styles.formGroup}>
+          <label htmlFor="name">Your Name:</label>
+          <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="contact">Contact Email:</label>
+          <input type="email" id="contact" name="contact" placeholder="Enter your email" required />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="phone">Phone Number:</label>
+          <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="persons">Number of Persons:</label>
+          <input type="number" id="persons" name="persons" placeholder="Number of guests" required />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="date">Event Date:</label>
+          <input type="date" id="date" name="date" required />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="time">Event Time:</label>
+          <input type="time" id="time" name="time" required />
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="purpose">Purpose of Event:</label>
+          <select id="purpose" name="purpose" required>
+            <option value="">Select purpose</option>
+            <option value="venue-catering">Venue Catering</option>
+            <option value="corporate-catering">Corporate Catering</option>
+            <option value="wedding-catering">Wedding Catering</option>
+            <option value="home-catering">Home Catering</option>
+            <option value="others">Others</option>
+          </select>
+        </div>
+        <div className={styles.formGroup}>
+          <label htmlFor="message">Message:</label>
+          <textarea id="message" name="message" placeholder="Additional details or requirements" rows="4"></textarea>
+        </div>
+        <button type="submit" className={styles.submitButton}>Submit</button>
+      </form>
 
       {/* Contact Us Section */}
       <h2 className={styles.sectiontitle}>Get in Touch for Your Next Corporate Event</h2>
