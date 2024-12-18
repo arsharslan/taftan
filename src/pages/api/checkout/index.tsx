@@ -70,8 +70,8 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData | ICheckout[] | ICheckout>) {
-    const user = await checkAuthorization(req, res);
-    if (!user) { return; }
+/*     const user = await checkAuthorization(req, res);
+    if (!user) { return; } */
     const method = req.method;
 
     if (method === 'GET') {

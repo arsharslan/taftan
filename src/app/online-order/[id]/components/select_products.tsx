@@ -1,7 +1,7 @@
 import { IDish } from "@/models/dish";
 import { classNames } from "@/utils/class_names";
 import { CheckIcon, MinusIcon, PlusIcon } from "@heroicons/react/16/solid";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useOnlineOrderContext } from "../online_order_context";
 import { DishSelected } from "../page";
 import { fetchDishes, postCheckout } from "@/provider/api_provider";
@@ -10,6 +10,8 @@ import LoadingIndicator from "@/components/loading_indicator";
 import { useRouter } from "next/navigation";
 import { CookiesProvider } from "@/provider/cookies_provider";
 import { CustomButton } from "@/components/custom_button";
+import Link from "next/link";
+import CategoryView from "./category_view";
 
 export function SelectProductsView() {
 
@@ -30,6 +32,7 @@ export function SelectProductsView() {
     }, []);
 
     const [isCreatingCheckout, setIsCreatingCheckout] = useState<boolean>(false);
+    
     const createCheckout = async () => {
         setIsCreatingCheckout(true);
         const response = await postCheckout({
@@ -110,7 +113,7 @@ export function SelectProductsView() {
                     <li>
                         Taftan operates on a pre-booked, high-quality food delivery model, focusing on traditional Mughlai, Chinese and Indian cuisine. Customers are required to place orders 24 hours in advance through WhatsApp, phone calls, or our website. This ensures every dish is freshly prepared using premium ingredients to maintain authenticity and flavor.
                     </li>
-                    <br />
+                    {/*<br />
                     <li>
                         Our offerings include a carefully curated menu featuring items like Mutton Biryani, Chicken Biryani, Mutton Korma, Nihari, Kebabs, and desserts such as Zarda and Kheer. Each dish comes with clear weight specifications, ensuring transparency and customer satisfaction.
                     </li>
@@ -133,110 +136,59 @@ export function SelectProductsView() {
 
                     <li>
                         By emphasizing quality, freshness, and convenience, Taftan’s model combines traditional culinary values with modern customer preferences, making it a trusted name in pre-booked online food services.
-                    </li>
+                    </li> */}
                 </ul>
             </div>
 
-            <h2 className="mt-8 text-2xl font-bold text-gray-300">Select your dish</h2>
+            <h2 className="mt-8 text-2xl font-bold text-gray-300">Online Order</h2>
 
-            <div className="mt-8 grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
-                {dishes?.map((dish, index) => (
-                    <div key={index}>
-                        <div className="relative">
-                            <div className="relative h-72 w-full overflow-hidden rounded-lg">
-                                {dish.image && <img alt={"dish"} src={dish.image ?? ""} className="size-full object-cover" />}
-                            </div>
-                            <div className="relative mt-4">
-                                <h3 className="text-sm font-bold text-gray-300">{dish.name}</h3>
-                                <p className="mt-1 text-sm text-gray-500 text-ellipsis line-clamp-2">{dish.description}</p>
-                            </div>
-                            <div className="absolute inset-x-0 top-0 flex h-72 items-end justify-end overflow-hidden rounded-lg p-4">
-                                <div
-                                    aria-hidden="true"
-                                    className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black opacity-50"
-                                />
-                                <p className="relative text-lg font-semibold text-white">{dish.price}</p>
-                            </div>
-                        </div>
-                        <div className="mt-6">
-                            {dishesSelected.some((x) => x.dish?._id === dish._id) ?
+            <div className="text-white grid grid-cols-1 gap-y-12 sm:gap-x-6 ">
+                <table className="min-w-full">
+                    <thead className="">
+                        <tr>
+                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                                Name
+                            </th>
+                            <th scope="col" className="hidden lg:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                Description
+                            </th>
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                Quantity
+                            </th>
+                            <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                                <span className="sr-only">Edit</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className="">
+                        {[
+                            {
+                                category: "Mutton Dishes",
+                                dishes: dishes?.filter((x) => x.category === "Mutton Dishes"),
+                            },
+                            {
+                                category: "Chicken Dishes",
+                                dishes: dishes?.filter((x) => x.category === "Chicken Dishes"),
+                            },
+                            {
+                                category: "Starters",
+                                dishes: dishes?.filter((x) => x.category === "Starters"),
+                            },
+                            {
+                                category: "Ready to Cook",
+                                dishes: dishes?.filter((x) => x.category === "Ready to Cook"),
+                            },
+                            {
+                                category: "Desserts",
+                                dishes: dishes?.filter((x) => x.category === "Desserts"),
+                            },
+                        ].map((dishCollection, index) => (
+                            <CategoryView key={index} category={dishCollection.category ?? ""} dishes={dishCollection.dishes ?? []}/>
+                        ))}
+                    </tbody>
+                </table>
 
-                                <span className="flex rounded-md shadow-sm">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setDishesSelected((prev) => {
-                                                const updatedDishSelected = prev.find((x) => x.dish?._id === dish._id);
-                                                if (updatedDishSelected?.quantity === dish.min_order) {
-                                                    return [...prev.filter((x) => x.dish?._id !== dish._id)];
-                                                } else {
-                                                    let quantity = (updatedDishSelected?.quantity ?? 0);
-                                                    return [
-                                                        ...prev.filter((x) => x.dish?._id !== dish._id),
-                                                        {
-                                                            dish,
-                                                            quantity: --quantity
-                                                        }
-                                                    ];
-                                                }
-                                            })
-                                        }}
-                                        className="relative flex-1 items-center rounded-l-md  px-3 py-2 text-sm font-semibold ring-inset bg-black ring-golden ring-2 text-white hover:text-golden focus:z-10"
-                                    >
-                                        <MinusIcon className="h-4 w-4 mx-auto" />
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="relative -ml-px flex-1 items-center px-3 py-2 text-sm font-semibold ring-inset bg-black ring-golden ring-2 text-white hover:text-golden focus:z-10"
-                                    >
-                                        {dishesSelected.find((x) => x.dish?._id === dish._id)?.quantity}
-                                    </button>
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            setDishesSelected((prev) => {
-                                                const updatedDishSelected = prev.find((x) => x.dish?._id === dish._id);
-                                                let quantity = (updatedDishSelected?.quantity ?? 0);
-                                                return [
-                                                    ...prev.filter((x) => x.dish?._id !== dish._id),
-                                                    {
-                                                        dish,
-                                                        quantity: ++quantity
-                                                    }
-                                                ];
 
-                                            })
-                                        }}
-                                        className="relative -ml-px flex-1 items-center rounded-r-md px-3 py-2 text-sm font-semibold ring-inset bg-black ring-golden ring-2 text-white hover:text-golden focus:z-10"
-                                    >
-                                        <PlusIcon className="h-4 w-4 mx-auto" />
-                                    </button>
-                                </span>
-                                : <div className="flex">
-                                    {/* <CustomButton text="Add to Cart"/> */}
-                                    <button
-
-                                        onClick={() => {
-                                            setDishesSelected((prev) => {
-                                                const newDishSelected: DishSelected = {
-                                                    dish,
-                                                    quantity: dish.min_order
-                                                };
-                                                return [
-                                                    ...prev,
-                                                    newDishSelected
-                                                ];
-                                            });
-                                        }}
-                                        className="flex-1  relative flex items-center justify-center rounded-md border border-transparent  px-8 py-2 text-sm font-medium bg-black ring-golden ring-2 text-white hover:text-golden "
-                                    >
-                                        Add to Cart<span className="sr-only">, {dish.name}</span>
-                                    </button>
-                                </div>}
-
-                        </div>
-                    </div>
-                ))}
             </div>
         </div>
         {
