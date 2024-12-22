@@ -40,6 +40,8 @@ export async function PATCH(req: NextApiRequest, res: NextApiResponse<ResponseDa
             landmark,
             pin_code,
             phone_number,
+            latitude,
+            longitude
         } = req.body;
 
         // Validate input
@@ -50,7 +52,9 @@ export async function PATCH(req: NextApiRequest, res: NextApiResponse<ResponseDa
             !city ||
             !state ||
             !pin_code ||
-            !phone_number
+            !phone_number ||
+            !latitude ||
+            !longitude
         ) {
             return res.status(400).json({ success: false, message: "Missing fields" });
         }
@@ -65,6 +69,8 @@ export async function PATCH(req: NextApiRequest, res: NextApiResponse<ResponseDa
             landmark,
             pin_code,
             phone_number,
+            latitude,
+            longitude
         });
 
         const updatedAddress = await Address.findByIdAndUpdate(id, address);

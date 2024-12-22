@@ -4,7 +4,7 @@ import { fetchAddresses, patchCheckout, postAddress } from "@/provider/api_provi
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast, ToastContainer } from "react-toastify";
@@ -15,6 +15,7 @@ import { useParams } from "next/navigation";
 import { useOnlineOrderContext } from "../online_order_context";
 import { CookiesProvider } from "@/provider/cookies_provider";
 import { CustomButton, SleekButton } from "@/components/custom_button";
+import { CheckIcon } from "@heroicons/react/24/outline";
 
 type AddressForm = {
     name: string;
@@ -24,6 +25,8 @@ type AddressForm = {
     landmark?: string;
     pin_code: number;
     phone_number: string;
+    latitude: number;
+    longitude: number;
 }
 
 const schema = z.object({
@@ -33,7 +36,13 @@ const schema = z.object({
     state: z.string().min(3),
     landmark: z.string().nullish(),
     pin_code: z.number().min(6),
-    phone_number: z.string().min(10)
+    phone_number: z.string().min(10),
+    latitude: z.number().refine((data) => data, {
+        message: "Your location is required"
+    }),
+    longitude: z.number().refine((data) => data, {
+        message: "Your location is required"
+    })
 })
 
 export default function SelectAddressView() {
@@ -52,6 +61,23 @@ export default function SelectAddressView() {
         }
     }
 
+    const fetchLocation = () => {
+        navigator.geolocation.getCurrentPosition(({ coords }) => {
+            const { latitude, longitude } = coords;
+            reset((prev) => {
+                return {
+                    ...prev,
+                    latitude,
+                    longitude
+                };
+            });
+        }, (error) => {
+            if (error.PERMISSION_DENIED) {
+                setShowLocationError("Location is required to add address");
+            }
+        })
+    }
+
     useEffect(() => {
         getAddresses();
     }, []);
@@ -62,7 +88,7 @@ export default function SelectAddressView() {
         })
     }, [open]);
 
-    const { register, reset, handleSubmit, formState: { errors } } = useForm<AddressForm>({ resolver: zodResolver(schema) });
+    const { register, reset, handleSubmit, formState: { errors }, control } = useForm<AddressForm>({ resolver: zodResolver(schema) });
     const [isAddingAddress, setIsAddingAddress] = useState<boolean>(false);
 
     const submit = async (data: AddressForm) => {
@@ -76,7 +102,9 @@ export default function SelectAddressView() {
                 state: data.state,
                 landmark: data.landmark,
                 pin_code: data.pin_code,
-                phone_number: data.phone_number
+                phone_number: data.phone_number,
+                latitude: data.latitude,
+                longitude: data.longitude
             }
         });
         if (response.data) {
@@ -102,6 +130,8 @@ export default function SelectAddressView() {
         }
         setAddressBeingSelected(undefined);
     }
+
+    const [showLocationError, setShowLocationError] = useState<string>();
 
     return <>
         <ToastContainer
@@ -129,68 +159,37 @@ export default function SelectAddressView() {
             key={index}
             className="w-1/2 overflow-hidden rounded-lg bg-gray-800 shadow-md mx-8 mb-8 mx-auto">
             <div className="px-4 py-5 sm:p-6">
-                <table className="min-w-full divide-y divide-gray-300 table-auto" >
-                    {/* <thead>
-                        <tr className="divide-x divide-[#DAA520]">
-                            <th scope="col" className="py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-0">
-                                #
-                            </th>
-                            <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900">
+                <dl className="mt-10 space-y-6 text-sm font-medium text-gray-300">
+                    <div className="flex justify-between">
+                        <dt>Name</dt>
+                        <dd className="">{address.name}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt>Street Address</dt>
+                        <dd className="">{address.street_address}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt>City</dt>
+                        <dd className="">{address.city}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt>State</dt>
+                        <dd className="">{address.state}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt>Landmark</dt>
+                        <dd className="">{address.landmark}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt>Pincode</dt>
+                        <dd className="">{address.pin_code}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                        <dt>Phone Number</dt>
+                        <dd className="">{address.phone_number}</dd>
+                    </div>
 
-                            </th>
-
-                        </tr>
-                    </thead> */}
-                    <tbody className="divide-y divide-[#DAA520] text-white">
-                        <tr className="divide-x divide-[#DAA520]">
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0 w-0">
-                                Name
-                            </td>
-                            <td className="whitespace-nowrap p-4 text-sm">
-                                {address.name}
-                            </td>
-                        </tr>
-                        <tr className="divide-x divide-[#DAA520]">
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
-                                Street Address
-                            </td>
-                            <td className="p-4 text-sm">{address.street_address}</td>
-                        </tr>
-                        <tr className="divide-x divide-[#DAA520]">
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
-                                City
-                            </td>
-                            <td className="whitespace-nowrap p-4 text-sm">{address.city}</td>
-
-                        </tr>
-                        <tr className="divide-x divide-[#DAA520]">
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
-                                State
-                            </td>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm sm:pr-0">{address.state}</td>
-
-                        </tr>
-                        {address.landmark && <tr className="divide-x divide-[#DAA520]">
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
-                                Landmark
-                            </td>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm sm:pr-0">{address.landmark}</td>
-
-                        </tr>}
-                        <tr className="divide-x divide-[#DAA520]">
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
-                                Pin Code
-                            </td>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm sm:pr-0">{address.pin_code}</td>
-                        </tr>
-                        <tr className="divide-x divide-[#DAA520]">
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm font-medium sm:pl-0">
-                                Phone Number
-                            </td>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm sm:pr-0">{address.phone_number}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                </dl>
             </div>
             <div className="flex">
                 <div className="ml-auto mx-8 mb-8">
@@ -341,6 +340,26 @@ export default function SelectAddressView() {
                                             {errors.phone_number?.message && <FieldErrorDisplay error={errors.phone_number?.message} className="flex" />}
                                         </div>
                                     </div>
+                                    <div className="flex">
+                                        <Controller
+                                            name={"latitude"}
+                                            control={control}
+                                            render={(field) => {
+                                                return <div className="flex flex-col">
+                                                    <button
+                                                        type="button"
+                                                        onClick={fetchLocation}
+                                                        className="mt-2 inline-flex rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                                    >
+                                                        Fetch Location
+                                                        {field.field.value ? <CheckIcon className="h-4 w-5" /> : <></>}
+                                                    </button>
+                                                    {errors.latitude?.message && <FieldErrorDisplay error={errors.latitude?.message} className="flex mt-1" />}
+                                                </div>
+                                            }}
+                                        />
+
+                                    </div>
                                 </div>
                             </div>
                             <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
@@ -360,6 +379,45 @@ export default function SelectAddressView() {
                                 </button>
                             </div>
                         </form>
+                    </DialogPanel>
+                </div>
+            </div>
+        </Dialog>
+
+        <Dialog open={showLocationError !== undefined} onClose={() => {
+            setShowLocationError(undefined);
+        }} className="relative z-10">
+            <DialogBackdrop
+                transition
+                className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+            />
+
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <DialogPanel
+                        transition
+                        className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                    >
+                        <div>
+                            <div className="text-center">
+                                <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                                    {showLocationError}
+                                </DialogTitle>
+                                {/* <div className="mt-2">
+                                    <p className="text-sm text-gray-500">
+                                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.
+                                    </p>
+                                </div> */}
+                            </div>
+                        </div>
+                        <div className="mt-5 sm:mt-6">
+                            <SleekButton
+                                text="Go Back"
+                                onClick={() => {
+                                    setShowLocationError(undefined);
+                                }}
+                            />
+                        </div>
                     </DialogPanel>
                 </div>
             </div>

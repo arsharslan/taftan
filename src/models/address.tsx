@@ -11,6 +11,8 @@ export interface IAddress {
     landmark?: string;
     pin_code: number;
     phone_number: string;
+    latitude: number;
+    longitude: number;
 }
 
 // Define the schema
@@ -24,6 +26,8 @@ export const AddressSchema: Schema<IAddress> = new mongoose.Schema(
         landmark: { type: String },
         pin_code: { type: Number, required: true },
         phone_number: { type: String, required: true },
+        latitude: { type: Number, required: true },
+        longitude: { type: Number, required: true },
     },
     { timestamps: true }
 );

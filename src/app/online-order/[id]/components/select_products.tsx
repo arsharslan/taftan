@@ -17,14 +17,19 @@ export function SelectProductsView() {
 
     const [dishes, setDishes] = useState<IDish[]>();
     const { dishesSelected, setDishesSelected, currentStep, setCurrentStep } = useOnlineOrderContext();
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const router = useRouter();
 
     const getDishes = async () => {
+        console.log("getting dishes")
+        setIsLoading(true);
         const response = await fetchDishes();
         if (response.data) {
+            console.log(response.data)
             setDishes(response.data);
         }
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -32,12 +37,13 @@ export function SelectProductsView() {
     }, []);
 
     const [isCreatingCheckout, setIsCreatingCheckout] = useState<boolean>(false);
-    
+
     const createCheckout = async () => {
+        const userId = await CookiesProvider.getUserId();
         setIsCreatingCheckout(true);
         const response = await postCheckout({
             checkout: {
-                user_id: (await CookiesProvider.getUserId()) ?? "",
+                user_id: userId,
                 items: dishesSelected.map((e) => {
                     return {
                         dish_id: e.dish?._id ?? undefined,
@@ -49,7 +55,11 @@ export function SelectProductsView() {
         if (response.data) {
             setCurrentStep(2);
             toast("Checkout created successfully!");
-            router.push(`/online-order/${response.data._id}`);
+            if (userId) {
+                router.push(`/online-order/${response.data._id}`);
+            } else {
+                router.push(`/sign-in/?redirect=online-order/${response.data._id}`);
+            }
         } else {
             toast("Error Occurred while creating checkout");
         }
@@ -142,7 +152,7 @@ export function SelectProductsView() {
 
             <h2 className="mt-8 text-2xl font-bold text-gray-300">Online Order</h2>
 
-            <div className="text-white grid grid-cols-1 gap-y-12 sm:gap-x-6 ">
+            {isLoading ? <LoadingIndicator /> : <div className="text-white grid grid-cols-1 gap-y-12 sm:gap-x-6 ">
                 <table className="min-w-full">
                     <thead className="">
                         <tr>
@@ -183,13 +193,11 @@ export function SelectProductsView() {
                                 dishes: dishes?.filter((x) => x.category === "Desserts"),
                             },
                         ].map((dishCollection, index) => (
-                            <CategoryView key={index} category={dishCollection.category ?? ""} dishes={dishCollection.dishes ?? []}/>
+                            <CategoryView key={index} category={dishCollection.category ?? ""} dishes={dishCollection.dishes ?? []} />
                         ))}
                     </tbody>
                 </table>
-
-
-            </div>
+            </div>}
         </div>
         {
             dishesSelected.length > 0 && <footer className="sticky bottom-0 py-8 ml-auto mr-8">
