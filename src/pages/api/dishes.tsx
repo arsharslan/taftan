@@ -22,8 +22,8 @@ export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData | IDish[]>) {
-    const user = await checkAuthorization(req, res);
-    if (!user) { return; }
+    /* const user = await checkAuthorization(req, res);
+    if (!user) { return; } */
 
     const method = req.method;
 

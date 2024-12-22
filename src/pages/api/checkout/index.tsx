@@ -8,6 +8,7 @@ import { ObjectId } from 'mongodb';
 import Checkout, { ICheckout } from '@/models/checkout';
 import { checkAuthorization } from '@/lib/check_authorization';
 import Dessert from '@/models/dish';
+import { getPricing } from './[id]';
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | ICheckout[]>) {
     try {
@@ -23,7 +24,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData
                     $eq: req.query.payment_mode
                 }
             })
-        }).populate('items.dish_id');
+        }).sort([["createdAt", -1]]).populate('items.dish_id');
         res.status(200).json(checkouts);
     } catch (error) {
         console.error('GET Error:', error);
@@ -45,7 +46,7 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
 
         // Validate input
         if (
-            !user_id ||
+            // !user_id ||
             !items
         ) {
             return res.status(400).json({ success: false, message: "Missing fields" });
@@ -59,10 +60,11 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
             requested_delivery_date,
             payment_done
         });
+        const pricing = getPricing({ ...newCheckout });
 
         await newCheckout.save();
 
-        res.status(201).json(newCheckout);
+        res.status(201).json({ ...newCheckout, ...pricing });
     } catch (error) {
         console.error('POST Error:', error);
         res.status(500).json({ success: false, message: `Failed to create checkout ${error}` });
@@ -70,8 +72,8 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData | ICheckout[] | ICheckout>) {
-    const user = await checkAuthorization(req, res);
-    if (!user) { return; }
+    /*     const user = await checkAuthorization(req, res);
+        if (!user) { return; } */
     const method = req.method;
 
     if (method === 'GET') {

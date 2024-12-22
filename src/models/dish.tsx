@@ -8,6 +8,7 @@ export interface IDish extends Document {
     description?: string;
     min_order: number;
     quantity: {
+        name: string;
         quantity: number;
         unit: string;
     }[];

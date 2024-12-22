@@ -4,6 +4,8 @@ import connectDB from "@/lib/mongodb";
 import Checkout, { ICheckout } from "@/models/checkout";
 import { checkAuthorization } from "@/lib/check_authorization";
 import { ResponseData } from "../../users";
+import { getPricing } from "../../checkout/[id]";
+import { DishSelected } from "@/app/online-order/[id]/page";
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | ICheckout>) {
     try {
@@ -11,10 +13,22 @@ export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData
 
         const { id } = req.query;
 
-        const checkout = await Checkout.findById(id).populate('items.dish_id');
+        const checkout = await Checkout.findById(id).populate('items.dish_id').lean();
+        const pricing = getPricing(
+            {
+                _id: checkout?._id,
+                items: checkout?.items?.map((e) => e as DishSelected),
+                delivery_charges: checkout?.delivery_charges
+            }
+        );
+        if (checkout) {
+            checkout!.gst = pricing.gst;
+            checkout!.sub_total = pricing.sub_total;
+            checkout!.total = pricing.total;
+        }
 
         if (checkout) {
-            res.status(200).json(checkout);
+            res.status(200).json(checkout as ICheckout);
         } else {
             res.status(404).json({
                 success: false,
@@ -39,7 +53,8 @@ export async function PATCH(req: NextApiRequest, res: NextApiResponse<ResponseDa
             address,
             requested_delivery_date,
             payment_done,
-            payment_mode
+            payment_mode,
+            is_paid
         } = req.body;
 
         // Validate input
@@ -64,11 +79,25 @@ export async function PATCH(req: NextApiRequest, res: NextApiResponse<ResponseDa
             ...(address && { address }),
             ...(requested_delivery_date && { requested_delivery_date }),
             ...(payment_done && { payment_done }),
-            ...(payment_mode && { payment_mode })
-        }, { new: true }).populate('items.dish_id');
+            ...(payment_mode && { payment_mode }),
+            ...(is_paid && { is_paid })
+        }, { new: true }).populate('items.dish_id').lean();
+
+        const pricing = getPricing(
+            {
+                _id: newCheckout?._id,
+                items: newCheckout?.items?.map((e) => e as DishSelected),
+                delivery_charges: newCheckout?.delivery_charges
+            }
+        );
+        if (newCheckout) {
+            newCheckout!.gst = pricing.gst;
+            newCheckout!.sub_total = pricing.sub_total;
+            newCheckout!.total = pricing.total;
+        }
 
         if (newCheckout) {
-            res.status(200).json(newCheckout);
+            res.status(200).json(newCheckout as ICheckout);
         } else {
             res.status(400).json({
                 success: false,

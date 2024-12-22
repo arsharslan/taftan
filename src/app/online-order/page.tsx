@@ -24,7 +24,7 @@ export default function OnlineOrdersView() {
 
         const response = await fetchCheckouts({
             user_id: userId,
-            payment_mode: PaymentMode.contact
+            // payment_mode: PaymentMode.contact
         });
 
         if (response.data) {

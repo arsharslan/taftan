@@ -14,7 +14,8 @@ export default function OrdersReceivedView() {
 
     const getCheckouts = async () => {
         const response = await fetchAdminCheckouts({
-            payment_mode: PaymentMode.contact
+            payment_mode: PaymentMode.contact,
+            is_paid: false
         });
 
         if (response.data) {
@@ -57,7 +58,6 @@ export default function OrdersReceivedView() {
                                             <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-white">
                                                 Total
                                             </th>
-
                                             <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                                 <span className="sr-only">View</span>
                                             </th>
@@ -76,7 +76,7 @@ export default function OrdersReceivedView() {
                                                     </td>
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{user?.first_name}{" "}{user?.last_name}</td>
                                                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{user?.phone_number}</td>
-                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{checkout?.items?.reduce((x, y) => x + ((y.dish_id as IDish).price), 0) ?? ""}</td>
+                                                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-300">{checkout?.items?.map((e) => ((e.dish_id as IDish).price ?? 0) * (e.quantity ?? 0)).reduce((x, y) => x + y) ?? ""}</td>
                                                     <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                                         <Link href={`/orders-received/${checkout._id}`} className="text-indigo-400 hover:text-indigo-300">
                                                             View<span className="sr-only"></span>

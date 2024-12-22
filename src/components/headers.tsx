@@ -57,6 +57,10 @@ const Header = () => {
 
     const logOut = async () => {
         setIsLoggingOut(true);
+        if (!userId) {
+            router.push("/sign-in");
+            return;
+        }
         const auth = getAuth(firebase_app);
         await signOut(auth);
         CookiesProvider.deleteUserId();
@@ -103,7 +107,7 @@ const Header = () => {
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
                     <button className="text-sm/6 font-semibold "
                         onClick={logOut}
-                        disabled={!userId}
+                    // disabled={!userId}
                     >
                         {isLoaggingOut ? <LoadingIndicator /> : userId ? "Log Out" : "Log in"} <span aria-hidden="true">&rarr;</span>
                     </button>

@@ -6,7 +6,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FirebaseError } from "firebase/app";
 import FieldErrorDisplay from "@/components/field_error";
-import { findUser } from "@/provider/api_provider";
+import { findUser, patchCheckout } from "@/provider/api_provider";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CookiesProvider } from "@/provider/cookies_provider";
 import { SleekButton } from "@/components/custom_button";
@@ -74,7 +74,7 @@ const SignInView = () => {
             const result = await signInWithPopup(auth, provider);
             const credential = GoogleAuthProvider.credentialFromResult(result);
             const user = result.user;
-            const response = await findUser({ firebase_id: user.uid });
+            const response = await findUser({ firebase_user: user });
             if (response.data) {
                 if (response.data._id) {
                     CookiesProvider.setUserId(response.data._id)
@@ -95,6 +95,7 @@ const SignInView = () => {
     const router = useRouter();
 
     const signInUsingEmail = async () => {
+        const redirect = searchParams?.get("redirect");
         setError(undefined);
         if (!emailRef.current?.value || !passwordRef.current?.value) {
             if (!emailRef.current?.value) {
@@ -107,12 +108,21 @@ const SignInView = () => {
         setIsVerifyingEmail(true);
         try {
             const result = await signInWithEmailAndPassword(auth, emailRef.current?.value, passwordRef.current?.value);
-            const response = await findUser({ firebase_id: result.user.uid });
+            const response = await findUser({ firebase_user: result.user });
             console.log(response);
             if (response.data) {
                 if (response.data._id) {
                     console.log("reponse user id", response.data._id);
                     CookiesProvider.setUserId(response.data._id);
+                    if (redirect?.includes("online-order")) {
+                        const checkoutId = redirect.split("/").at(1);
+                        const checkoutResponse = await patchCheckout({
+                            checkout: {
+                                _id: checkoutId,
+                                user_id: response.data._id
+                            }
+                        });
+                    }
                     // localStorage.setItem("user_id", response.data._id);
                 }
                 router.push(searchParams?.get("redirect") ?? "/");
