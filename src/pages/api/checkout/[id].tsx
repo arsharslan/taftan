@@ -5,15 +5,17 @@ import connectDB from "@/lib/mongodb";
 import Checkout, { ICheckout } from "@/models/checkout";
 import { checkAuthorization } from "@/lib/check_authorization";
 import { fetchDistance } from "@/provider/api_provider";
-import { IDish } from "@/models/dish";
+import Dessert, { IDish } from "@/models/dish";
 import { DishSelected } from "@/app/online-order/[id]/page";
+import User from "@/models/user";
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | ICheckout>) {
     try {
         await connectDB();
 
         const { id } = req.query;
-
+        User;
+        Dessert;
         const checkout = await Checkout.findById(id).populate('items.dish_id').lean();
         const pricing = getPricing(
             {
