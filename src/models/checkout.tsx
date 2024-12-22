@@ -36,7 +36,7 @@ const CheckoutSchema = new mongoose.Schema({
         required: false,
     },
     delivery_charges: { type: Number, required: false },
-    is_paid: { type: Boolean, required: true, default: true },
+    is_paid: { type: Boolean, required: true, default: false },
     /* sub_total: { type: Number, required: false },
     gst: { type: Number, required: false },
     total: { type: Number, required: false } */

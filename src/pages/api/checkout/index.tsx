@@ -60,11 +60,18 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
             requested_delivery_date,
             payment_done
         });
-        const pricing = getPricing({ ...newCheckout });
 
-        await newCheckout.save();
+        const checkoutCreated = await newCheckout.save();
+        //adding pricing is not working
+        const pricing = getPricing(newCheckout);
+        if (newCheckout) {
+            newCheckout!.gst = pricing.gst;
+            newCheckout!.sub_total = pricing.sub_total;
+            newCheckout!.total = pricing.total;
+        }
+        console.log(newCheckout);
 
-        res.status(201).json({ ...newCheckout, ...pricing });
+        res.status(201).json(newCheckout);
     } catch (error) {
         console.error('POST Error:', error);
         res.status(500).json({ success: false, message: `Failed to create checkout ${error}` });
