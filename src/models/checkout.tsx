@@ -11,7 +11,12 @@ export interface ICheckout {
     address?: IAddress,
     requested_delivery_date?: Date,
     payment_mode?: PaymentMode,
-    createdAt?: string
+    createdAt?: string,
+    delivery_charges?: number;
+    sub_total?: number;
+    gst?: number;
+    total?: number;
+    is_paid?: boolean;
 }
 
 const DishSelectedSchema = new mongoose.Schema({
@@ -21,7 +26,7 @@ const DishSelectedSchema = new mongoose.Schema({
 
 // Define the schema
 const CheckoutSchema = new mongoose.Schema({
-    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false },
     items: { type: [DishSelectedSchema], required: true },
     address: { type: AddressSchema, required: false },
     requested_delivery_date: { type: Date, required: false },
@@ -30,6 +35,11 @@ const CheckoutSchema = new mongoose.Schema({
         enum: ['ONLINE', 'CONTACT'],
         required: false,
     },
+    delivery_charges: { type: Number, required: false },
+    is_paid: { type: Boolean, required: true, default: false },
+    /* sub_total: { type: Number, required: false },
+    gst: { type: Number, required: false },
+    total: { type: Number, required: false } */
 }, { timestamps: true });
 
 // Create the model

@@ -13,7 +13,6 @@ import User from '@/models/user';
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | ICheckout[]>) {
     try {
         await connectDB();
-        console.log(req.query);
         User;
         Dessert;
         const checkouts = await Checkout.find({
@@ -26,8 +25,13 @@ export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData
                 payment_mode: {
                     $eq: req.query.payment_mode
                 }
+            }),
+            ...(req.query.is_paid !== undefined && {
+                is_paid: {
+                    $eq: req.query.is_paid
+                }
             })
-        }).populate('items.dish_id').populate('user_id');
+        }).populate('items.dish_id').populate('user_id').sort([["createdAt", -1]]);
         res.status(200).json(checkouts);
     } catch (error) {
         console.error('GET Error:', error);

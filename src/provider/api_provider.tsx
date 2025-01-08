@@ -4,6 +4,8 @@ import { ICheckout } from "@/models/checkout";
 import { IDish } from "@/models/dish";
 import { IUser } from "@/models/user";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { CookiesProvider } from "./cookies_provider";
+import { DistanceMatrixResponse } from "@/models/distance_matrix_response";
 
 const auth = getAuth(firebase_app);
 let user: User | null;
@@ -82,8 +84,17 @@ async function convertResponse<T>(
 }
 
 //----------------------Headers----------------------//
-async function getHeaders(isImage = false) {
-    console.log(user);
+async function getHeaders({ firebase_user }: { firebase_user?: User } = {}) {
+    const userId = await CookiesProvider.getUserId();
+
+    if (!userId) {
+        const token = await firebase_user?.getIdToken();
+        return {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            ...(token && { Authorization: token }),
+        } as HeadersInit;
+    }
     user ??= await getUser;
     console.log(user);
     const token = await user?.getIdToken();
@@ -101,11 +112,11 @@ async function getHeaders(isImage = false) {
     } as HeadersInit;
     //   }
 }
-export async function findUser({ firebase_id }: { firebase_id: string }): Promise<ApiResponse<IUser>> {
+export async function findUser({ firebase_user }: { firebase_user: User }): Promise<ApiResponse<IUser>> {
     console.log(await getHeaders());
     return convertResponse<IUser>(
-        fetch(`/api/users/?firebase_id=${firebase_id}`, {
-            headers: await getHeaders(),
+        fetch(`/api/users/?firebase_id=${firebase_user.uid}`, {
+            headers: await getHeaders({ firebase_user }),
         })
     );
 }
@@ -172,6 +183,16 @@ export async function fetchAdminCheckout({ checkoutId }: { checkoutId: string })
     );
 }
 
+export async function patchAdminCheckout({ checkout }: { checkout: ICheckout }): Promise<ApiResponse<ICheckout>> {
+    return convertResponse<ICheckout>(
+        fetch(`/api/admin/checkout/${checkout._id}`, {
+            headers: await getHeaders(),
+            method: "PATCH",
+            body: JSON.stringify(checkout)
+        })
+    );
+}
+
 export async function fetchCheckouts({ user_id, payment_mode }: { user_id: string, payment_mode?: string }): Promise<ApiResponse<ICheckout[]>> {
     let url = `/api/checkout/?user_id=${user_id}&`;
     if (payment_mode) {
@@ -185,13 +206,16 @@ export async function fetchCheckouts({ user_id, payment_mode }: { user_id: strin
     );
 }
 
-export async function fetchAdminCheckouts({ user_id, payment_mode }: { user_id?: string, payment_mode?: string }): Promise<ApiResponse<ICheckout[]>> {
+export async function fetchAdminCheckouts({ user_id, payment_mode, is_paid }: { user_id?: string, payment_mode?: string, is_paid?: boolean }): Promise<ApiResponse<ICheckout[]>> {
     let url = `/api/admin/checkout/?`;
     if (user_id) {
         url += `user_id=${user_id}&`;
     }
     if (payment_mode) {
         url += `payment_mode=${payment_mode}&`;
+    }
+    if (is_paid !== undefined) {
+        url += `is_paid=${is_paid}&`;
     }
 
     return convertResponse<ICheckout[]>(
@@ -207,6 +231,14 @@ export async function patchCheckout({ checkout }: { checkout: ICheckout }): Prom
             method: "PATCH",
             body: JSON.stringify(checkout),
             headers: await getHeaders(),
+        })
+    );
+}
+
+export async function fetchDistance({ latitude, longitude }: { latitude: number, longitude: number }): Promise<ApiResponse<DistanceMatrixResponse>> {
+    return convertResponse<DistanceMatrixResponse>(
+        fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&key=AIzaSyD2MyysKnNvSEXcAAOLBBkzFw6J2goG3dE&destinations=${latitude},${longitude}&origins=place_id:ChIJ_RabmR_-mzkR3gW7HpAwT4s`, {
+            // headers: await getHeaders(),
         })
     );
 }

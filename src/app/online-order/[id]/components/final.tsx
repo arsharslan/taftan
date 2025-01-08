@@ -29,7 +29,7 @@ export default function FinalView() {
 
     const router = useRouter();
 
-    const confirmOrder = async () => {
+    const confirmOrder = async (paymentMode: PaymentMode) => {
         setError(undefined);
         if (!startDate) {
             setError("Please select date of delivery");
@@ -63,7 +63,7 @@ export default function FinalView() {
                 <div className="lg:grid lg:grid-cols-2 lg:gap-x-12 xl:gap-x-16">
                     <div>
                         <div className="border-golden">
-                            <div className="border-golden">
+                            {/* <div className="border-golden">
                                 <fieldset>
                                     <legend className="text-lg font-medium text-gray-200">Payment method</legend>
                                     <RadioGroup
@@ -110,36 +110,10 @@ export default function FinalView() {
                                                 />
                                             </div>
                                         )
-
-                                            /* (
-                                                <Radio
-                                                    key={deliveryMethod.mode}
-                                                    value={deliveryMethod}
-                                                    aria-label={deliveryMethod.title}
-                                                    className="group relative flex cursor-pointer rounded-lg border border-gray-300 p-4 shadow-sm focus:outline-none data-[checked]:border-transparent data-[focus]:ring-2 data-[focus]:ring-indigo-500"
-                                                >
-                                                    <span className="flex flex-1">
-                                                        <span className="flex flex-col">
-                                                            <span className="block text-sm font-medium ">{deliveryMethod.title}</span>
-                                                            <span className="mt-1 flex items-center text-sm text-gray-500">
-                                                                {deliveryMethod.body}
-                                                            </span>
-                                                        </span>
-                                                    </span>
-                                                    <CheckCircleIcon
-                                                        aria-hidden="true"
-                                                        className="size-5 text-indigo-600 [.group:not([data-checked])_&]:hidden"
-                                                    />
-                                                    <span
-                                                        aria-hidden="true"
-                                                        className="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-indigo-500"
-                                                    />
-                                                </Radio>
-                                            ) */
                                         )}
                                     </RadioGroup>
                                 </fieldset>
-                            </div>
+                            </div> */}
                             <div className="mt-4  border-golden pt-4">
                                 <legend className="text-lg font-medium text-gray-200">Select Date</legend>
                                 <DatePicker
@@ -307,27 +281,39 @@ export default function FinalView() {
                             <dl className="space-y-6 border-t border-golden ring-golden px-4 py-6 sm:px-6">
                                 <div className="flex items-center justify-between">
                                     <dt className="text-sm">Subtotal</dt>
-                                    <dd className="text-sm font-medium">{checkout?.items?.reduce((x, y) => x + ((y.dish_id as IDish).price), 0) ?? ""}</dd>
+                                    <dd className="text-sm font-medium">{checkout?.sub_total}</dd>
                                 </div>
-                                {/* <div className="flex items-center justify-between">
+                                <div className="flex items-center justify-between">
                                     <dt className="text-sm">Shipping</dt>
-                                    <dd className="text-sm font-medium">$5.00</dd>
+                                    <dd className="text-sm font-medium">{checkout?.delivery_charges}</dd>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <dt className="text-sm">Taxes</dt>
-                                    <dd className="text-sm font-medium">$5.52</dd>
-                                </div> */}
+                                    <dd className="text-sm font-medium">{checkout?.gst}</dd>
+                                </div>
                                 <div className="flex items-center justify-between border-t border-golden pt-6">
                                     <dt className="text-base font-medium">Total</dt>
-                                    <dd className="text-base font-medium">{checkout?.items?.reduce((x, y) => x + ((y.dish_id as IDish).price), 0) ?? ""}</dd>
+                                    <dd className="text-base font-medium">{checkout?.total}</dd>
                                 </div>
                             </dl>
 
                             <div className="border-t border-golden px-4 py-6 sm:px-6 flex">
-                                <div className="mx-auto">
-                                    <CustomButton
-                                        onClick={confirmOrder}
-                                        text={paymentMode === PaymentMode.contact ? "Request Call" : "Confirm Order"} />
+                                <div className="mx-auto flex space-x-3">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            confirmOrder(PaymentMode.contact);
+                                        }}
+                                        className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                    >
+                                        Request Call
+                                    </button>
+                                    <div>
+                                        <SleekButton text="Pay Online" onClick={() => {
+                                            confirmOrder(PaymentMode.online);
+                                        }} />
+                                    </div>
+
                                 </div>
                                 {/* <button
                                     onClick={confirmOrder}

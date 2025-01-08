@@ -1,18 +1,21 @@
 "use client";
 import { SleekButton } from "@/components/custom_button";
+import LoadingIndicator from "@/components/loading_indicator";
 import { ICheckout } from "@/models/checkout";
 import { IDish } from "@/models/dish";
 import { IUser } from "@/models/user";
-import { fetchAdminCheckout } from "@/provider/api_provider";
+import { fetchAdminCheckout, patchAdminCheckout } from "@/provider/api_provider";
 import displayDate from "@/utils/display_date";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function OrderReceivedDetailView() {
     const params = useParams<{ id: string }>()
     const checkoutId: string | null = params?.id ?? null;
     const [checkout, setCheckout] = useState<ICheckout>();
+    const [isMarkingAsPaid, setIsMarkingAsPaid] = useState<boolean>(false);
 
     const getCheckout = async () => {
         if (!checkoutId) { return; }
@@ -26,12 +29,31 @@ export default function OrderReceivedDetailView() {
         }
     }
 
+    const markAsPaid = async () => {
+        setIsMarkingAsPaid(true);
+        const response = await patchAdminCheckout({
+            checkout: {
+                _id: checkoutId,
+                is_paid: true
+            }
+        });
+        if (response.data) {
+            setCheckout(response.data);
+            if (response.data.is_paid) {
+                toast("Marked as Paid");
+            }
+        }
+        setIsMarkingAsPaid(false);
+    }
+
 
     useEffect(() => {
         getCheckout();
     }, []);
 
     return <div className="text-gray-300 flex flex-col">
+        <ToastContainer
+            toastStyle={{ backgroundColor: "black", color: "white" }} />
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:pb-24">
             <div className="max-w-xl">
                 <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Checkout Detail</h1>
@@ -47,7 +69,7 @@ export default function OrderReceivedDetailView() {
                     <div>
 
                         <div className="rounded-lg border border-gray-50 px-4 py-6 sm:flex sm:items-center sm:justify-between sm:space-x-6 sm:px-6 lg:space-x-8">
-                            <dl className="flex-auto space-y-6 divide-y divide-gray-200 text-sm sm:grid sm:grid-cols-4 sm:gap-x-6 sm:space-y-0 sm:divide-y-0 lg:flex-none lg:gap-x-8">
+                            <dl className="flex-auto space-y-6 divide-y divide-gray-200 text-sm sm:grid sm:grid-cols-4 sm:gap-x-6 sm:space-y-2 sm:divide-y-0 lg:flex-none lg:gap-x-8">
                                 {checkout?.createdAt && <div className="flex justify-between sm:block">
                                     <dt className="font-medium ">Date placed</dt>
                                     <dd className="sm:mt-1">
@@ -64,9 +86,22 @@ export default function OrderReceivedDetailView() {
                                     <dt className="font-medium ">Customer</dt>
                                     <dd className="sm:mt-1">{(checkout?.user_id as IUser)?.first_name} {(checkout?.user_id as IUser)?.last_name} {(checkout?.user_id as IUser)?.phone_number}</dd>
                                 </div>
+
                                 <div className="flex justify-between pt-6 font-medium  sm:block sm:pt-0">
-                                    <dt>Total amount</dt>
-                                    <dd className="sm:mt-1">{checkout?.items?.reduce((x, y) => x + ((y.dish_id as IDish).price), 0) ?? ""}</dd>
+                                    <dt>Sub amount</dt>
+                                    <dd className="sm:mt-1">{checkout?.sub_total}</dd>
+                                </div>
+                                <div className="flex justify-between pt-6 font-medium  sm:block sm:pt-0">
+                                    <dt>Delivery Charges</dt>
+                                    <dd className="sm:mt-1">{checkout?.delivery_charges}</dd>
+                                </div>
+                                <div className="flex justify-between pt-6 font-medium  sm:block sm:pt-0">
+                                    <dt>GST</dt>
+                                    <dd className="sm:mt-1">{checkout?.gst}</dd>
+                                </div>
+                                <div className="flex justify-between pt-6 font-medium  sm:block sm:pt-0">
+                                    <dt>Total</dt>
+                                    <dd className="sm:mt-1">{checkout?.total}</dd>
                                 </div>
                             </dl>
                         </div>
@@ -117,11 +152,10 @@ export default function OrderReceivedDetailView() {
         </div>
 
         <footer className="sticky bottom-0 py-8 ml-auto mr-8">
-            <Link
-                href={`online-order/0`}
-            >
-                <SleekButton text="Confirm Order" />
-            </Link>
+            {!checkout?.is_paid &&
+
+                (isMarkingAsPaid ? <LoadingIndicator /> : <SleekButton text="Mark as Paid" onClick={markAsPaid} />)
+            }
         </footer>
     </div>;
 }

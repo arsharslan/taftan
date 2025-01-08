@@ -36,6 +36,8 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
             landmark,
             pin_code,
             phone_number,
+            latitude,
+            longitude
         } = req.body;
 
         // Validate input
@@ -46,7 +48,9 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
             !city ||
             !state ||
             !pin_code ||
-            !phone_number
+            !phone_number ||
+            !latitude ||
+            !longitude
         ) {
             return res.status(400).json({ success: false, message: "Missing fields" });
         }
@@ -61,6 +65,8 @@ export async function POST(req: NextApiRequest, res: NextApiResponse<ResponseDat
             landmark,
             pin_code,
             phone_number,
+            latitude,
+            longitude
         });
 
         await newAddress.save();
