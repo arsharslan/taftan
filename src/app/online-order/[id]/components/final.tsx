@@ -55,6 +55,11 @@ export default function FinalView() {
     }
 
     const initiatePayment = async () => {
+        setError(undefined);
+        if (!startDate) {
+            setError("Please select date of delivery");
+            return;
+        }
         if (!checkout?._id) { return; }
         setIsInitiatingPayment(true);
         const response = await createOrder(checkout!._id!);
