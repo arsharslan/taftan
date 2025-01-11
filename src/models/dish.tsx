@@ -75,6 +75,6 @@ const DessertSchema: Schema<IDish> = new mongoose.Schema(
 );
 
 // Create the model
-const Dessert: Model<IDish> = models.Dessert || model<IDish>('Dish', DessertSchema);
+const Dessert: Model<IDish> = models.Dish || model<IDish>('Dish', DessertSchema);
 
 export default Dessert;

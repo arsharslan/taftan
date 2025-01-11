@@ -24,6 +24,7 @@ export default function OnlineOrdersView() {
 
         const response = await fetchCheckouts({
             user_id: userId,
+            // is_paid: false,
             // payment_mode: PaymentMode.contact
         });
 
@@ -77,15 +78,30 @@ export default function OnlineOrdersView() {
                                             <dt className="font-medium ">Total amount</dt>
                                             <dd className="mt-1 font-medium ">{checkout?.items?.reduce((x, y) => x + ((y.dish_id as IDish).price), 0) ?? ""}</dd>
                                         </div>
+                                        <div>
+
+                                        </div>
                                     </dl>
 
                                     <div className="hidden lg:col-span-2 lg:flex lg:items-center lg:justify-end lg:space-x-4">
-                                        <Link
-                                            href={`online-order/${checkout._id}`}
-                                            className="flex items-center justify-center rounded-md border border-gray-300  px-2.5 py-2 text-sm font-medium shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                                        >
-                                            <span>View Order</span>
-                                        </Link>
+                                        {checkout.is_paid === true ? <>
+                                            <span className="inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-green-900/40">
+                                                Paid
+                                            </span>
+                                            <Link
+                                                href={`#`}
+                                                className="flex items-center justify-center rounded-md border border-gray-300  px-2.5 py-2 text-sm font-medium shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                            >
+                                                <span>Track Order</span>
+                                            </Link>
+                                        </> : <>
+                                            <Link
+                                                href={`online-order/${checkout._id}`}
+                                                className="flex items-center justify-center rounded-md border border-gray-300  px-2.5 py-2 text-sm font-medium shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                            >
+                                                <span>View Order</span>
+                                            </Link>
+                                        </>}
                                     </div>
                                 </div>
 
@@ -146,7 +162,7 @@ export default function OnlineOrdersView() {
             <Link
                 href={`online-order/0`}
             >
-                <CustomButton text="Create Order"/>
+                <CustomButton text="Create Order" />
             </Link>
         </footer>
     </div >

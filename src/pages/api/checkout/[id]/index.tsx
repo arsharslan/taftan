@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { ResponseData } from "../users";
+import { ResponseData } from "../../users";
 import Address, { IAddress } from "@/models/address";
 import connectDB from "@/lib/mongodb";
 import Checkout, { ICheckout } from "@/models/checkout";
@@ -85,25 +85,6 @@ export async function PATCH(req: NextApiRequest, res: NextApiResponse<ResponseDa
         } = req.body;
 
         let delivery_charges = await getDeliveryAddress(address);
-
-
-
-        // Validate input
-        /* if (
-            !user_id ||
-            !items
-        ) {
-            return res.status(400).json({ success: false, message: "Missing fields" });
-        } */
-
-        // Create a new user
-        /* const newCheckout = new Checkout({
-            user_id,
-            items,
-            address,
-            requested_delivery_date,
-            payment_done
-        }); */
 
         const newCheckout = await Checkout.findByIdAndUpdate(id, {
             ...(items && { items }),

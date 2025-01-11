@@ -2,8 +2,6 @@ import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
     const userId = request.cookies.get('user_id')?.value
-    console.log("user id", userId);
-    console.log("pathname", request.nextUrl.pathname);
 
     if (request.nextUrl.pathname !== "/" && allowedUrls.every((x) => !request.nextUrl.pathname.startsWith(x))) {
         if (userId && request.nextUrl.pathname.startsWith('/sign-in')) {
@@ -30,7 +28,8 @@ const allowedUrls = [
     "/catering-home",
     "/catering-wedding",
     "/culinary-delights",
-    "/online-order"
+    "/online-order",
+    "/success"
 ];
 
 export const config = {

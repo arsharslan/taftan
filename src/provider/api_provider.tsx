@@ -6,6 +6,7 @@ import { IUser } from "@/models/user";
 import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { CookiesProvider } from "./cookies_provider";
 import { DistanceMatrixResponse } from "@/models/distance_matrix_response";
+import { PaymentGatewayResponse } from "@/pages/api/checkout/[id]/create-order";
 
 const auth = getAuth(firebase_app);
 let user: User | null;
@@ -193,10 +194,13 @@ export async function patchAdminCheckout({ checkout }: { checkout: ICheckout }):
     );
 }
 
-export async function fetchCheckouts({ user_id, payment_mode }: { user_id: string, payment_mode?: string }): Promise<ApiResponse<ICheckout[]>> {
+export async function fetchCheckouts({ user_id, payment_mode, is_paid }: { user_id: string, payment_mode?: string, is_paid?: boolean }): Promise<ApiResponse<ICheckout[]>> {
     let url = `/api/checkout/?user_id=${user_id}&`;
     if (payment_mode) {
         url += `payment_mode=${payment_mode}&`;
+    }
+    if (is_paid !== undefined) {
+        url += `is_paid=${is_paid}&`;
     }
 
     return convertResponse<ICheckout[]>(
@@ -239,6 +243,22 @@ export async function fetchDistance({ latitude, longitude }: { latitude: number,
     return convertResponse<DistanceMatrixResponse>(
         fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&key=AIzaSyD2MyysKnNvSEXcAAOLBBkzFw6J2goG3dE&destinations=${latitude},${longitude}&origins=place_id:ChIJ_RabmR_-mzkR3gW7HpAwT4s`, {
             // headers: await getHeaders(),
+        })
+    );
+}
+
+export async function createOrder(checkoutId: string): Promise<ApiResponse<PaymentGatewayResponse>> {
+    return convertResponse<PaymentGatewayResponse>(
+        fetch(`/api/checkout/${checkoutId}/create-order/`, {
+            headers: await getHeaders(),
+        })
+    );
+}
+
+export async function verifyPayment(checkoutId: string, transactionId: string): Promise<ApiResponse<PaymentGatewayResponse>> {
+    return convertResponse<PaymentGatewayResponse>(
+        fetch(`/api/checkout/${checkoutId}/${transactionId}/verify-order/`, {
+            headers: await getHeaders(),
         })
     );
 }

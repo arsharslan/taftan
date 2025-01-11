@@ -7,7 +7,7 @@ import { IDish } from "@/models/dish";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import FieldErrorDisplay from "@/components/field_error";
-import { patchCheckout } from "@/provider/api_provider";
+import { createOrder, patchCheckout } from "@/provider/api_provider";
 import LoadingIndicator from "@/components/loading_indicator";
 import { toast, ToastContainer } from "react-toastify";
 import { CustomButton, SleekButton } from "@/components/custom_button";
@@ -25,6 +25,7 @@ export default function FinalView() {
     const { checkout, setCheckout, startDate, setStartDate, paymentMode, setPaymentMode } = useOnlineOrderContext();
     const [error, setError] = useState<string>();
     const [isConfirmingOrder, setIsConfirmingOrder] = useState<boolean>(false);
+    const [isInitiatingPayment, setIsInitiatingPayment] = useState<boolean>(false);
     const [successMsg, setSuccessMsg] = useState<string>();
 
     const router = useRouter();
@@ -53,9 +54,20 @@ export default function FinalView() {
         setIsConfirmingOrder(false);
     }
 
+    const initiatePayment = async () => {
+        if (!checkout?._id) { return; }
+        setIsInitiatingPayment(true);
+        const response = await createOrder(checkout!._id!);
+        if (response.data) {
+            document.open();
+            document.write(response.data.data);
+            document.close();
+        }
+        setIsInitiatingPayment(false);
+    }
+
     return <>
         <div className="text-gray-200">
-
             <div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
                 <h2 className="text-2xl/7 font-bold sm:truncate sm:text-3xl sm:tracking-tight mb-4">
                     Confirm Order
@@ -309,9 +321,7 @@ export default function FinalView() {
                                         Request Call
                                     </button>
                                     <div>
-                                        <SleekButton text="Pay Online" onClick={() => {
-                                            confirmOrder(PaymentMode.online);
-                                        }} />
+                                        {isInitiatingPayment ? <LoadingIndicator /> : <SleekButton text="Pay Online" onClick={initiatePayment} />}
                                     </div>
 
                                 </div>

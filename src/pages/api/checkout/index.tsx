@@ -9,6 +9,7 @@ import Checkout, { ICheckout } from '@/models/checkout';
 import { checkAuthorization } from '@/lib/check_authorization';
 import Dessert from '@/models/dish';
 import { getPricing } from './[id]';
+import { PaymentMode } from '@/app/online-order/[id]/components/final';
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | ICheckout[]>) {
     try {
@@ -23,8 +24,13 @@ export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData
                 payment_mode: {
                     $eq: req.query.payment_mode
                 }
+            }),
+            ...(req.query.is_paid !== undefined && {
+                is_paid: {
+                    $eq: req.query.is_paid
+                }
             })
-        }).sort([["createdAt", -1]]).populate('items.dish_id');
+        }).sort([["createdAt", -1], ["is_paid", 1]]).populate('items.dish_id');
         res.status(200).json(checkouts);
     } catch (error) {
         console.error('GET Error:', error);
