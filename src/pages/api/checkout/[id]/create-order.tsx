@@ -15,8 +15,8 @@ import { NextResponse } from "next/server";
 // const Payu: any = require('payu-websdk');
 
 const payu = new Payu({
-    key: process.env.NEXT_PUBLIC_PAYU_KEY!,
-    salt: process.env.NEXT_PUBLIC_PAYU_SALT!
+    key: process.env.PAYU_KEY!,
+    salt: process.env.PAYU_SALT!
 },
     "TEST")
 
