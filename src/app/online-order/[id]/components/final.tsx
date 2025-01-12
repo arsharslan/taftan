@@ -7,13 +7,14 @@ import { IDish } from "@/models/dish";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import FieldErrorDisplay from "@/components/field_error";
-import { createOrder, patchCheckout } from "@/provider/api_provider";
+import { createOrder, createRazorpayOrder, patchCheckout, verifyRazorpayPayment } from "@/provider/api_provider";
 import LoadingIndicator from "@/components/loading_indicator";
 import { toast, ToastContainer } from "react-toastify";
 import { CustomButton, SleekButton } from "@/components/custom_button";
 import { IUser } from "@/models/user";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useRouter } from "next/navigation";
+import Script from "next/script";
 
 export enum PaymentMode {
     online = "ONLINE",
@@ -25,8 +26,10 @@ export default function FinalView() {
     const { checkout, setCheckout, startDate, setStartDate, paymentMode, setPaymentMode } = useOnlineOrderContext();
     const [error, setError] = useState<string>();
     const [isConfirmingOrder, setIsConfirmingOrder] = useState<boolean>(false);
-    const [isInitiatingPayment, setIsInitiatingPayment] = useState<boolean>(false);
+    const [isInitiatingPayUPayment, setIsInitiatingPayUPayment] = useState<boolean>(false);
+    const [isInitiatingRazorpayPayment, setIsInitiatingRazorpayPayment] = useState<boolean>(false);
     const [successMsg, setSuccessMsg] = useState<string>();
+    const [showPaymentGatewayDialog, setShowPaymentGatewayDialog] = useState<boolean>(false);
 
     const router = useRouter();
 
@@ -54,21 +57,73 @@ export default function FinalView() {
         setIsConfirmingOrder(false);
     }
 
-    const initiatePayment = async () => {
+    const initiatePayUPayment = async () => {
         setError(undefined);
         if (!startDate) {
             setError("Please select date of delivery");
             return;
         }
         if (!checkout?._id) { return; }
-        setIsInitiatingPayment(true);
+        setIsInitiatingPayUPayment(true);
         const response = await createOrder(checkout!._id!);
         if (response.data) {
             document.open();
             document.write(response.data.data);
             document.close();
         }
-        setIsInitiatingPayment(false);
+        setIsInitiatingPayUPayment(false);
+        setShowPaymentGatewayDialog(false);
+    }
+
+    const initiateRazorpayPayment = async () => {
+        setError(undefined);
+        if (!startDate) {
+            setError("Please select date of delivery");
+            return;
+        }
+        if (!checkout?._id) { return; }
+        setIsInitiatingRazorpayPayment(true);
+        const response = await createRazorpayOrder(checkout!._id!);
+        if (response.data && checkout.total && response.data.data.id) {
+            const options = {
+                key: process.env.RAZORPAY_ID,
+                amount: checkout.total * 100,
+                currency: "INR",
+                order_id: response.data.data.id,
+                name: response.data.user?.first_name,
+                description: 'food-order',
+                handler: async function (response: any) {
+                    if (!checkout._id) { return; }
+
+                    const verifyResponse = await verifyRazorpayPayment({
+                        checkout_id: checkout._id,
+                        order_creation_id: response.razorpay_order_id, razorpay_payment_id: response.razorpay_payment_id, razorpay_signature: response.razorpay_signature
+                    });
+
+                    if (verifyResponse.data) {
+                        router.replace("/online-order");
+                    } else {
+                        toast("Couldn't Verify your Payment");
+                    }
+                },
+                prefill: {
+                    name: response.data.user?.first_name,
+                    email: response.data.user?.email,
+                    contact: response.data.user?.phone_number
+                },
+                theme: {
+                    color: '#3399cc',
+                },
+            };
+
+            const paymentObject = new (window as any).Razorpay(options);
+            paymentObject.on('payment.failed', function (response: any) {
+                alert(response.error.description);
+            });
+            paymentObject.open();
+        }
+        setIsInitiatingRazorpayPayment(false);
+        setShowPaymentGatewayDialog(false);
     }
 
     return <>
@@ -326,7 +381,13 @@ export default function FinalView() {
                                         Request Call
                                     </button>
                                     <div>
-                                        {isInitiatingPayment ? <LoadingIndicator /> : <SleekButton text="Pay Online" onClick={initiatePayment} />}
+                                        <SleekButton text="Pay Online" onClick={() => {
+                                            if (!startDate) {
+                                                setError("Please select date of delivery");
+                                                return;
+                                            }
+                                            setShowPaymentGatewayDialog(true);
+                                        }} />
                                     </div>
 
                                 </div>
@@ -395,5 +456,56 @@ export default function FinalView() {
                 </div>
             </div>
         </Dialog>
+
+        <Dialog open={showPaymentGatewayDialog} onClose={setShowPaymentGatewayDialog} className="relative z-10">
+            <DialogBackdrop
+                transition
+                className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+            />
+
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <DialogPanel
+                        transition
+                        className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                    >
+                        <div>
+                            <div className="text-center">
+                                <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                                    Select Payment Gateway
+                                </DialogTitle>
+
+                            </div>
+                        </div>
+                        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    initiateRazorpayPayment();
+                                }}
+                                className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                            >
+                                {isInitiatingRazorpayPayment ? <LoadingIndicator /> : "Razorpay"}
+                            </button>
+                            <button
+                                type="button"
+                                data-autofocus
+                                onClick={() => {
+                                    initiatePayUPayment();
+                                }}
+                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                            >
+                                {isInitiatingPayUPayment ? <LoadingIndicator /> : "PayU"}
+                            </button>
+                        </div>
+                    </DialogPanel>
+                </div>
+            </div>
+        </Dialog>
+
+        <Script
+            id="razorpay-checkout-js"
+            src="https://checkout.razorpay.com/v1/checkout.js"
+        />
     </>;
 }

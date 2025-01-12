@@ -262,3 +262,35 @@ export async function verifyPayment(checkoutId: string, transactionId: string): 
         })
     );
 }
+
+export async function createRazorpayOrder(checkoutId: string): Promise<ApiResponse<PaymentGatewayResponse>> {
+    return convertResponse<PaymentGatewayResponse>(
+        fetch(`/api/checkout/${checkoutId}/razorpay/create-order/`, {
+            headers: await getHeaders(),
+        })
+    );
+}
+
+export async function verifyRazorpayPayment({
+    checkout_id,
+    order_creation_id,
+    razorpay_payment_id,
+    razorpay_signature
+}: {
+    checkout_id: string,
+    order_creation_id: string,
+    razorpay_payment_id: string,
+    razorpay_signature: string
+}): Promise<ApiResponse<PaymentGatewayResponse>> {
+    return convertResponse<PaymentGatewayResponse>(
+        fetch(`/api/checkout/${checkout_id}/razorpay/verify-order/`, {
+            headers: await getHeaders(),
+            method: "POST",
+            body: JSON.stringify({
+                order_creation_id,
+                razorpay_payment_id,
+                razorpay_signature
+            })
+        })
+    );
+}

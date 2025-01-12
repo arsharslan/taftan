@@ -31,8 +31,9 @@ function generateRandomString(length = 10, chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZab
 
 export interface PaymentGatewayResponse {
     payment_gateway: string,
-    data: any,
-    new_checkout?: ICheckout
+    data?: any,
+    new_checkout?: ICheckout,
+    user?: IUser
 }
 
 export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData | PaymentGatewayResponse>) {
