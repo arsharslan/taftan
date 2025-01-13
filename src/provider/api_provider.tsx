@@ -294,3 +294,12 @@ export async function verifyRazorpayPayment({
         })
     );
 }
+
+export async function deleteCheckout({ checkoutId }: { checkoutId: string }): Promise<ApiResponse<ICheckout>> {
+    return convertResponse<ICheckout>(
+        fetch(`/api/checkout/${checkoutId}/`, {
+            method: "DELETE",
+            headers: await getHeaders(),
+        })
+    );
+}

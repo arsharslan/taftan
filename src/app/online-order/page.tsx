@@ -1,6 +1,6 @@
 "use client";
 import firebase_app from "@/firebase/config"
-import { fetchCheckouts } from "@/provider/api_provider";
+import { deleteCheckout, fetchCheckouts } from "@/provider/api_provider";
 import { getAuth, onAuthStateChanged } from "firebase/auth"
 import { use, useEffect, useState } from "react";
 import { PaymentMode } from "./[id]/components/final";
@@ -12,10 +12,13 @@ import Image from "next/image";
 import { CookiesProvider } from "@/provider/cookies_provider";
 import { goldenColor } from "@/utils/colors";
 import { CustomButton } from "@/components/custom_button";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import LoadingIndicator from "@/components/loading_indicator";
 
 export default function OnlineOrdersView() {
 
     const [checkouts, setCheckouts] = useState<ICheckout[]>();
+    const [checkoutBeingDeleted, setCheckoutBeingDeleted] = useState<string>();
 
     const getCheckouts = async () => {
         const userId = await CookiesProvider.getUserId();
@@ -31,6 +34,15 @@ export default function OnlineOrdersView() {
         if (response.data) {
             setCheckouts(response.data);
         }
+    }
+
+    const removeCheckout = async (checkoutId: string) => {
+        setCheckoutBeingDeleted(checkoutId);
+        const response = await deleteCheckout({ checkoutId });
+        if (response.status) {
+            await getCheckouts();
+        }
+        setCheckoutBeingDeleted(undefined);
     }
 
     useEffect(() => {
@@ -62,7 +74,7 @@ export default function OnlineOrdersView() {
                                 className="border-b border-t border-gray-200  shadow-sm sm:rounded-lg sm:border"
                             >
 
-                                <div className="flex items-center border-b border-gray-200 p-4 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6">
+                                <div className="flex ml-auto items-center border-b border-gray-200 p-4 sm:grid sm:grid-cols-4 sm:gap-x-6 sm:p-6">
                                     <dl className="grid flex-1 grid-cols-2 gap-x-6 text-sm sm:col-span-3 sm:grid-cols-3 lg:col-span-2">
                                         {/* <div>
                                             <dt className="font-medium ">Order number</dt>
@@ -83,11 +95,13 @@ export default function OnlineOrdersView() {
                                         </div>
                                     </dl>
 
-                                    <div className="hidden lg:col-span-2 lg:flex lg:items-center lg:justify-end lg:space-x-4">
+                                    <div className="col-span-2 flex flex-col lg:flex-row lg:items-center justify-end lg:space-x-4">
                                         {checkout.is_paid === true ? <>
-                                            <span className="inline-flex items-center rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-green-900/40">
-                                                Paid
-                                            </span>
+                                            <div className="ml-auto">
+                                                <span className=" items-center rounded-md bg-green-500 px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-green-900/40">
+                                                    Paid
+                                                </span>
+                                            </div>
                                             <Link
                                                 href={`#`}
                                                 className="flex items-center justify-center rounded-md border border-gray-300  px-2.5 py-2 text-sm font-medium shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -102,6 +116,18 @@ export default function OnlineOrdersView() {
                                                 <span>View Order</span>
                                             </Link>
                                         </>}
+
+                                        {checkout.is_paid !== true && <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (checkout._id) {
+                                                    removeCheckout(checkout._id);
+                                                }
+                                            }}
+                                            className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                        >
+                                            {checkoutBeingDeleted === checkout._id ? <LoadingIndicator /> : <TrashIcon className="h-4 w-4" />}
+                                        </button>}
                                     </div>
                                 </div>
 
