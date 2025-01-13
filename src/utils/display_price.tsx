@@ -1,0 +1,3 @@
+const displayPrice = (price: string) => {
+    
+}

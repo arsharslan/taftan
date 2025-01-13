@@ -15,13 +15,13 @@ export default function CategoryView({ category, dishes }: { category: string, d
         <tr className="border-t border-gray-200">
             <th
                 scope="colgroup"
-                colSpan={4}
+                colSpan={5}
                 className=" py-2 pl-4 pr-3 text-left text-sm font-semibold sm:pl-3"
             >
                 <div className="flex items-center hover:cursor-pointer" onClick={() => {
                     setShow((prev) => !prev);
                 }}>
-                    <h2 className="text-2xl/7 font-bold sm:truncate sm:text-3xl sm:tracking-tight">
+                    <h2 className=" text-2xl/7 font-bold sm:truncate sm:text-3xl sm:tracking-tight">
                         {category}
                     </h2>
                     {show ? <ChevronUpIcon className="h-8 w-8 ml-auto" /> : <ChevronDownIcon className="h-8 w-8 ml-auto" />}
@@ -37,7 +37,10 @@ export default function CategoryView({ category, dishes }: { category: string, d
                     <td className="py-4 pl-4 pr-3 text-sm font-medium  sm:pl-3">
                         {dish.name}
                     </td>
-                    <td className="hidden lg:table-cell px-3 py-4 text-sm">{dish.description}</td>
+                    <td className="hidden lg:table-cell px-3 py-4 text-sm max-w-80">{dish.description}</td>
+                    <td className=" px-3 py-4 text-sm ">
+                        {`₹ ${dish.price}` }
+                    </td>
                     <td className=" px-3 py-4 text-sm ">
                         {dish.quantity.map((quantity, index) => <div key={index} className="flex">
                             <p>{quantity.name}:{" "}</p>

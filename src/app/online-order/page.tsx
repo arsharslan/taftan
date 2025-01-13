@@ -52,14 +52,14 @@ export default function OnlineOrdersView() {
     return <div className="text-gray-200 flex flex-col">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
         </div>
-        <div className="py-16 mx-16">
+        <div className="py-16 mx-4 lg:mx-a16">
             <div className="mx-auto sm:px-2 lg:px-8">
                 <div className="mx-auto px-4 lg:px-0">
                     {/* <Image src={"/images/taftan_logo_alt-modified.png"} alt={""} height={100} width={100} className="mr-ato mb-4" /> */}
 
-                    <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Checkouts Pending</h1>
-                    <p className="mt-2 text-sm text-gray-500">
-                        A list of all the checkouts for which you are yet to receive calls
+                    <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Your Orders</h1>
+                    <p className="mt-2 text-sm text-gray-400">
+                        A list of all the orders you are have created so far
                     </p>
                 </div>
             </div>
@@ -117,17 +117,19 @@ export default function OnlineOrdersView() {
                                             </Link>
                                         </>}
 
-                                        {checkout.is_paid !== true && <button
-                                            type="button"
-                                            onClick={() => {
-                                                if (checkout._id) {
-                                                    removeCheckout(checkout._id);
-                                                }
-                                            }}
-                                            className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                        >
-                                            {checkoutBeingDeleted === checkout._id ? <LoadingIndicator /> : <TrashIcon className="h-4 w-4" />}
-                                        </button>}
+                                        {checkout.is_paid !== true && <div className="ml-auto">
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (checkout._id) {
+                                                        removeCheckout(checkout._id);
+                                                    }
+                                                }}
+                                                className="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                            >
+                                                {checkoutBeingDeleted === checkout._id ? <LoadingIndicator /> : <TrashIcon className="h-4 w-4" />}
+                                            </button>
+                                        </div>}
                                     </div>
                                 </div>
 
