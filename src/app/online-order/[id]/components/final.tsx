@@ -30,6 +30,8 @@ export default function FinalView() {
     const [isInitiatingRazorpayPayment, setIsInitiatingRazorpayPayment] = useState<boolean>(false);
     const [successMsg, setSuccessMsg] = useState<string>();
     const [showPaymentGatewayDialog, setShowPaymentGatewayDialog] = useState<boolean>(false);
+    const [showDatePickerDialog, setShowDatePickerDialog] = useState<boolean>(false);
+    const [tmpDate, setTmpDate] = useState<Date>();
 
     const router = useRouter();
 
@@ -383,7 +385,8 @@ export default function FinalView() {
                                     <div>
                                         <SleekButton text="Pay Online" onClick={() => {
                                             if (!startDate) {
-                                                setError("Please select date of delivery");
+                                                setShowDatePickerDialog(true);
+                                                // setError("Please select date of delivery");
                                                 return;
                                             }
                                             setShowPaymentGatewayDialog(true);
@@ -502,6 +505,72 @@ export default function FinalView() {
                 </div>
             </div>
         </Dialog>
+
+        <Dialog open={showDatePickerDialog} onClose={setShowDatePickerDialog} className="relative z-10">
+            <DialogBackdrop
+                transition
+                className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+            />
+
+            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <DialogPanel
+                        transition
+                        className="relative transform rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                    >
+                        <div>
+                            <div className="text-center">
+                                <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                                    Pick a suitable Date and Time
+                                </DialogTitle>
+                                <div className="flex">
+                                    <div className=" border-golden pt-4">
+                                        <legend className="text-left text-lg font-medium text-gray-800">Select Date</legend>
+                                        <DatePicker
+                                            selected={tmpDate}
+                                            onChange={(date) => {
+                                                if (date) {
+                                                    setTmpDate(date)
+                                                }
+                                            }}
+                                            minDate={new Date()}
+                                            showTimeSelect
+                                            dateFormat="Pp"
+                                            className="bg-transparent rounded-lg border-golden ring-golden"
+                                        />
+                                    </div>
+                                    {error && <FieldErrorDisplay error={error} />}
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (tmpDate) {
+                                        setStartDate(tmpDate);
+                                        setShowDatePickerDialog(false);
+                                        setShowPaymentGatewayDialog(true);
+                                    }
+                                }}
+                                className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                            >
+                                Confirm
+                            </button>
+                            <button
+                                type="button"
+                                data-autofocus
+                                onClick={() => setShowDatePickerDialog(false)}
+                                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </DialogPanel>
+                </div>
+            </div>
+        </Dialog>
+
 
         <Script
             id="razorpay-checkout-js"

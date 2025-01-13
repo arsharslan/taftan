@@ -156,16 +156,16 @@ export function SelectProductsView() {
                 <table className="min-w-full">
                     <thead className="">
                         <tr>
-                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-3">
+                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-300 sm:pl-3">
                                 Name
                             </th>
-                            <th scope="col" className="hidden lg:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <th scope="col" className="hidden lg:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-300">
                                 Description
                             </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-300">
                                 Price
                             </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-300">
                                 Quantity
                             </th>
                             <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
