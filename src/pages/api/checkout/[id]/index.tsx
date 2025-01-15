@@ -61,8 +61,7 @@ const getDeliveryAddress = async (address: number | undefined) => {
     const addressDetail = await Address.findById(address);
     if (!addressDetail) { return; }
     const response = await fetchDistance({
-        latitude: addressDetail.latitude,
-        longitude: addressDetail.longitude
+        placeId: addressDetail.place_id
     });
     const distanceInMeters = response.data?.rows.at(0)?.elements.at(0)?.distance.value;
     if (!distanceInMeters) { return; }

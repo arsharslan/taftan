@@ -1,8 +1,8 @@
 import firebase_app from "@/firebase/config";
 import { IAddress } from "@/models/address"
-import { fetchAddresses, patchCheckout, postAddress } from "@/provider/api_provider";
+import { fetchAddresses, getAddressFromLatLong, getCoordinatesFromAddress, patchCheckout, postAddress } from "@/provider/api_provider";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -12,38 +12,20 @@ import FieldErrorDisplay from "@/components/field_error";
 import LoadingIndicator from "@/components/loading_indicator";
 import React from "react";
 import { useParams } from "next/navigation";
-import { useOnlineOrderContext } from "../online_order_context";
+import { AddressForm, useOnlineOrderContext } from "../online_order_context";
 import { CookiesProvider } from "@/provider/cookies_provider";
 import { CustomButton, SleekButton } from "@/components/custom_button";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import { ArrowLongRightIcon, CheckIcon } from "@heroicons/react/24/outline";
+import Autocomplete from "@/components/autocomplete";
+import Script from "next/script";
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api";
+import { debounce } from "@/utils/debounce";
+import { generateUniqSerial } from "@/utils/unique";
+import { MapPinIcon } from "@heroicons/react/20/solid";
+import { useMediaQuery } from 'react-responsive';
+import PickLocation from "./pick_location";
+import FillAddressForm from "./fill_address_form";
 
-type AddressForm = {
-    name: string;
-    street_address: string;
-    city: string;
-    state: string;
-    landmark?: string;
-    pin_code: number;
-    phone_number: string;
-    latitude: number;
-    longitude: number;
-}
-
-const schema = z.object({
-    name: z.string().min(3),
-    street_address: z.string().min(3),
-    city: z.string().min(3),
-    state: z.string().min(3),
-    landmark: z.string().nullish(),
-    pin_code: z.number().min(6),
-    phone_number: z.string().min(10),
-    latitude: z.number().refine((data) => data, {
-        message: "Your location is required"
-    }),
-    longitude: z.number().refine((data) => data, {
-        message: "Your location is required"
-    })
-})
 
 export default function SelectAddressView() {
 
@@ -52,7 +34,23 @@ export default function SelectAddressView() {
     const [addressBeingSelected, setAddressBeingSelected] = useState<string>();
     const params = useParams<{ id: string }>()
     const checkoutId: string | null = params?.id ?? null;
-    const { checkout, setCheckout, setCurrentStep } = useOnlineOrderContext();
+    const { checkout, setCheckout, setCurrentStep, showMap,
+        setShowMap,
+        coordinates,
+        setCoordinates,
+        register,
+        reset,
+        handleSubmit,
+        errors,
+        control,
+        setValue,
+        setSmallScreenPickAddress,
+        isAddingAddress,
+        setIsAddingAddress,
+        smallScreenFillAddressForm,
+        smallScreenPickAddress,
+        setSmallScreenFillAddressForm
+    } = useOnlineOrderContext();
 
     const getAddresses = async () => {
         const response = await fetchAddresses({ user_id: (await CookiesProvider.getUserId()) ?? "" });
@@ -62,8 +60,9 @@ export default function SelectAddressView() {
     }
 
     const fetchLocation = () => {
-        navigator.geolocation.getCurrentPosition(({ coords }) => {
+        navigator.geolocation.getCurrentPosition(async ({ coords }) => {
             const { latitude, longitude } = coords;
+            const response = await getAddressFromLatLong({ latitude, longitude });
             reset((prev) => {
                 return {
                     ...prev,
@@ -88,8 +87,6 @@ export default function SelectAddressView() {
         })
     }, [open]);
 
-    const { register, reset, handleSubmit, formState: { errors }, control } = useForm<AddressForm>({ resolver: zodResolver(schema) });
-    const [isAddingAddress, setIsAddingAddress] = useState<boolean>(false);
 
     const submit = async (data: AddressForm) => {
         setIsAddingAddress(true);
@@ -103,14 +100,20 @@ export default function SelectAddressView() {
                 landmark: data.landmark,
                 pin_code: data.pin_code,
                 phone_number: data.phone_number,
-                latitude: data.latitude,
-                longitude: data.longitude
+                place_id: data.place_id,
+                type: data.type
+                /* latitude: data.latitude,
+                longitude: data.longitude */
             }
         });
         if (response.data) {
             toast("Address added successfully!");
             getAddresses();
             setOpen(false);
+            if (isSmallScreen) {
+                setSmallScreenPickAddress(false);
+                setSmallScreenFillAddressForm(false);
+            }
         }
         setIsAddingAddress(false);
     }
@@ -120,11 +123,10 @@ export default function SelectAddressView() {
         const response = await patchCheckout({
             checkout: {
                 _id: checkout!._id,
-                address
+                address: address
             }
         });
         if (response.data) {
-            console.log("successfull")
             setCheckout(response.data);
             setCurrentStep(3);
         }
@@ -133,18 +135,39 @@ export default function SelectAddressView() {
 
     const [showLocationError, setShowLocationError] = useState<string>();
 
+    const isSmallScreen = useMediaQuery({ query: '(max-width: 768px)' });
+
     return <>
+
+        <Script
+            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&libraries=places`}
+            strategy="beforeInteractive"
+        />
+
         <ToastContainer
             toastStyle={{ backgroundColor: "black", color: "white" }} />
-        <div className="m-16 flex">
-            <h2 className="mr-auto text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">
-                Select Address
-            </h2>
 
-            <CustomButton text="Add Address" onClick={() => {
-                setOpen(true);
-            }} />
-            {/* <button
+        <form className="mt-2" onSubmit={handleSubmit(submit)}>
+            {
+                smallScreenFillAddressForm ? <div className="text-gray-200 mx-8">
+                    <FillAddressForm />
+                </div> :
+                    smallScreenPickAddress ? <div className="h-80 mx-8">
+                        <PickLocation />
+                    </div> : <>
+                        <div className="m-16 flex">
+                            <h2 className="mr-auto text-2xl/7 font-bold text-white sm:truncate sm:text-3xl sm:tracking-tight">
+                                Select Address
+                            </h2>
+
+                            <CustomButton text="Add Address" onClick={() => {
+                                if (isSmallScreen) {
+                                    setSmallScreenPickAddress(true);
+                                } else {
+                                    setOpen(true);
+                                }
+                            }} />
+                            {/* <button
                 type="button"
                 onClick={() => {
                     setOpen(true);
@@ -153,55 +176,83 @@ export default function SelectAddressView() {
             >
                 Add Address
             </button> */}
-        </div>
+                        </div>
 
-        {addresses.map((address, index) => <div
-            key={index}
-            className="w-1/2 overflow-hidden rounded-lg bg-gray-800 shadow-md mx-8 mb-8 mx-auto">
-            <div className="px-4 py-5 sm:p-6">
-                <dl className="mt-10 space-y-6 text-sm font-medium text-gray-300">
-                    <div className="flex justify-between">
-                        <dt>Name</dt>
-                        <dd className="">{address.name}</dd>
-                    </div>
-                    <div className="flex justify-between">
-                        <dt>Street Address</dt>
-                        <dd className="">{address.street_address}</dd>
-                    </div>
-                    <div className="flex justify-between">
-                        <dt>City</dt>
-                        <dd className="">{address.city}</dd>
-                    </div>
-                    <div className="flex justify-between">
-                        <dt>State</dt>
-                        <dd className="">{address.state}</dd>
-                    </div>
-                    <div className="flex justify-between">
-                        <dt>Landmark</dt>
-                        <dd className="">{address.landmark}</dd>
-                    </div>
-                    <div className="flex justify-between">
-                        <dt>Pincode</dt>
-                        <dd className="">{address.pin_code}</dd>
-                    </div>
-                    <div className="flex justify-between">
-                        <dt>Phone Number</dt>
-                        <dd className="">{address.phone_number}</dd>
-                    </div>
+                        <div className="space-y-4">
+                            {addresses.map((address, index) =>
+                                isSmallScreen ? <div
+                                    onClick={() => {
+                                        selectAddress(address);
+                                    }}
+                                    className="mx-8 overflow-hidden rounded-lg bg-gray-700 shadow" key={address._id}>
+                                    <div className="px-4 py-5 sm:p-6">
+                                        <h3 className="text-base font-semibold text-gray-100">{address.type}</h3>
+                                        <p className="mt-1 text-sm text-gray-200">
+                                            {address.street_address}
+                                        </p>
+                                        <div className="flex items-center">
+                                            <p className="mt-1 text-sm text-gray-200">
+                                            </p>
+                                            <p className="mt-1 text-sm text-gray-200">
+                                                {`${address.state}, ${address.city}`}
+                                            </p>
+                                            <p className="ml-auto text-sm text-gray-200">
+                                                {addressBeingSelected === address._id ? <LoadingIndicator /> : <ArrowLongRightIcon className="h-4 w-8 text-blue-200" />}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div> :
+                                    <div
+                                        key={generateUniqSerial()}
+                                        className="w-1/2 overflow-hidden rounded-lg bg-gray-800 shadow-md mx-8 mb-8 mx-auto">
+                                        <div className="px-4 py-5 sm:p-6">
+                                            <dl className="mt-10 space-y-6 text-sm font-medium text-gray-300">
+                                                <div className="flex justify-between">
+                                                    <dt>Name</dt>
+                                                    <dd className="">{address.name}</dd>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <dt>Street Address</dt>
+                                                    <dd className="">{address.street_address}</dd>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <dt>City</dt>
+                                                    <dd className="">{address.city}</dd>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <dt>State</dt>
+                                                    <dd className="">{address.state}</dd>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <dt>Type</dt>
+                                                    <dd className="">{address.type}</dd>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <dt>Landmark</dt>
+                                                    <dd className="">{address.landmark}</dd>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <dt>Pincode</dt>
+                                                    <dd className="">{address.pin_code}</dd>
+                                                </div>
+                                                <div className="flex justify-between">
+                                                    <dt>Phone Number</dt>
+                                                    <dd className="">{address.phone_number}</dd>
+                                                </div>
 
-                </dl>
-            </div>
-            <div className="flex">
-                <div className="ml-auto mx-8 mb-8">
+                                            </dl>
+                                        </div>
+                                        <div className="flex">
+                                            <div className="ml-auto mx-8 mb-8">
 
-                    {addressBeingSelected === address._id ? <LoadingIndicator /> : <SleekButton
-                        onClick={() => {
-                            selectAddress(address);
-                        }}
-                        text={checkout?.address?._id === address._id ? "Selected" : "Select"}
-                    />}
-                </div>
-                {/* <button
+                                                {addressBeingSelected === address._id ? <LoadingIndicator /> : <SleekButton
+                                                    onClick={() => {
+                                                        selectAddress(address);
+                                                    }}
+                                                    text={(checkout?.address as IAddress)?._id === address._id ? "Selected" : "Select"}
+                                                />}
+                                            </div>
+                                            {/* <button
                     type="button"
                     disabled={checkout?.address?._id === address._id}
                     onClick={() => {
@@ -211,216 +262,107 @@ export default function SelectAddressView() {
                 >
                     {addressBeingSelected === address._id ? <LoadingIndicator /> : checkout?.address?._id === address._id ? "Selected" : "Select"}
                 </button> */}
-            </div>
-        </div>)}
+                                        </div>
+                                    </div>)}
+                        </div>
 
-        <div className="h-8" />
 
-        <Dialog open={open} onClose={setOpen} className="relative z-10 text-gray-200">
-            <DialogBackdrop
-                transition
-                className="fixed inset-0 bg-gray-700/50 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
-            />
+                        <div className="h-8" />
 
-            <div className="fixed inset-0 z-10 w-screen overflow-y-auto ">
-                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <DialogPanel
-                        transition
-                        className="relative transform overflow-hidden rounded-lg bg-gray-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
-                    >
-                        <form className="mt-2" onSubmit={handleSubmit(submit)}>
+                        <Dialog open={open} onClose={() => {
+                            setOpen(false);
+                            setShowMap(false);
+                        }} className="relative z-10 text-gray-200">
+                            <DialogBackdrop
+                                transition
+                                className="fixed inset-0 bg-gray-700/50 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+                            />
 
-                            <div>
-                                <div className="text-center space-y-2">
-                                    <DialogTitle as="h3" className="text-base font-semibold">
-                                        Add Address
-                                    </DialogTitle>
-                                    <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium ">
-                                            Name
-                                        </label>
-                                        <div className="mt-2">
-                                            <input
-                                                {...register("name", { required: true })}
-                                                id="name"
-                                                name="name"
-                                                type="text"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5  shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                            />
-                                            {errors.name?.message && <FieldErrorDisplay error={errors.name?.message} className="flex" />}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
-                                            Street Address
-                                        </label>
-                                        <div className="mt-2">
-                                            <input
-                                                {...register("street_address", { required: true })}
-                                                id="street_address"
-                                                name="street_address"
-                                                type="text"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                            />
-                                            {errors.street_address?.message && <FieldErrorDisplay error={errors.street_address?.message} className="flex" />}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
-                                            City
-                                        </label>
-                                        <div className="mt-2">
-                                            <input
-                                                {...register("city", { required: true })}
-                                                id="city"
-                                                name="city"
-                                                type="text"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                            />
-                                            {errors.city?.message && <FieldErrorDisplay error={errors.city?.message} className="flex" />}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
-                                            State
-                                        </label>
-                                        <div className="mt-2">
-                                            <input
-                                                {...register("state", { required: true })}
-                                                id="state"
-                                                name="state"
-                                                type="text"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                            />
-                                            {errors.state?.message && <FieldErrorDisplay error={errors.state?.message} className="flex" />}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
-                                            Landmark
-                                        </label>
-                                        <div className="mt-2">
-                                            <input
-                                                {...register("landmark")}
-                                                id="landmark"
-                                                name="landmark"
-                                                type="text"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                            />
-                                            {errors.landmark?.message && <FieldErrorDisplay error={errors.landmark?.message} className="flex" />}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
-                                            Pin Code
-                                        </label>
-                                        <div className="mt-2">
-                                            <input
-                                                {...register("pin_code", { required: true, valueAsNumber: true })}
-                                                id="pin_code"
-                                                name="pin_code"
-                                                type="text"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                            />
-                                            {errors.pin_code?.message && <FieldErrorDisplay error={errors.pin_code?.message} className="flex" />}
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <label htmlFor="email" className="text-left block text-sm/6 font-medium">
-                                            Phone Number
-                                        </label>
-                                        <div className="mt-2">
-                                            <input
-                                                {...register("phone_number", { required: true })}
-                                                id="phone_number"
-                                                name="phone_number"
-                                                type="text"
-                                                className="block w-full bg-transparent rounded-md border-0 py-1.5 shadow-sm ring-1 ring-inset ring-golden placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
-                                            />
-                                            {errors.phone_number?.message && <FieldErrorDisplay error={errors.phone_number?.message} className="flex" />}
-                                        </div>
-                                    </div>
-                                    <div className="flex">
-                                        <Controller
-                                            name={"latitude"}
-                                            control={control}
-                                            render={(field) => {
-                                                return <div className="flex flex-col">
-                                                    <button
-                                                        type="button"
-                                                        onClick={fetchLocation}
-                                                        className="mt-2 inline-flex rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                                    >
-                                                        Fetch Location
-                                                        {field.field.value ? <CheckIcon className="h-4 w-5" /> : <></>}
-                                                    </button>
-                                                    {errors.latitude?.message && <FieldErrorDisplay error={errors.latitude?.message} className="flex mt-1" />}
+                            <div className="fixed inset-0 z-10 w-screen overflow-y-auto ">
+                                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                                    <DialogPanel
+                                        transition
+                                        className="relative transform overflow-hidden rounded-lg bg-gray-900 px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-4xl sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                                    >
+
+                                        <div>
+                                            <div className="text-center space-y-2">
+                                                <DialogTitle as="h3" className="text-base font-semibold">
+                                                    Add Address
+                                                </DialogTitle>
+                                                <div className="flex">
+                                                    <div className="flex-1 flex flex-col">
+                                                        <PickLocation />
+                                                    </div>
+                                                    <div className="w-4" />
+                                                    <div className="flex-1">
+                                                        <FillAddressForm />
+                                                    </div>
                                                 </div>
-                                            }}
-                                        />
 
-                                    </div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
+                                            <button
+                                                type="submit"
+                                                className="inline-flex w-full justify-center rounded-md bg-golden ring-golden ring-2 text-black hover:text-white px-3 py-2 text-sm font-semibold  shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  sm:col-start-2"
+                                            >
+                                                {isAddingAddress ? <LoadingIndicator /> : "Save"}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                data-autofocus
+                                                onClick={() => setOpen(false)}
+                                                className="mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold  shadow-sm bg-black ring-golden ring-2 text-white hover:text-golden sm:col-start-1 sm:mt-0"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </DialogPanel>
                                 </div>
                             </div>
-                            <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                                <button
-                                    type="submit"
-                                    className="inline-flex w-full justify-center rounded-md bg-golden ring-golden ring-2 text-black hover:text-white px-3 py-2 text-sm font-semibold  shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2  sm:col-start-2"
-                                >
-                                    {isAddingAddress ? <LoadingIndicator /> : "Save"}
-                                </button>
-                                <button
-                                    type="button"
-                                    data-autofocus
-                                    onClick={() => setOpen(false)}
-                                    className="mt-3 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold  shadow-sm bg-black ring-golden ring-2 text-white hover:text-golden sm:col-start-1 sm:mt-0"
-                                >
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </DialogPanel>
-                </div>
-            </div>
-        </Dialog>
+                        </Dialog >
 
-        <Dialog open={showLocationError !== undefined} onClose={() => {
-            setShowLocationError(undefined);
-        }} className="relative z-10">
-            <DialogBackdrop
-                transition
-                className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
-            />
+                        <Dialog open={showLocationError !== undefined} onClose={() => {
+                            setShowLocationError(undefined);
+                        }} className="relative z-10">
+                            <DialogBackdrop
+                                transition
+                                className="fixed inset-0 bg-gray-500/75 transition-opacity data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in"
+                            />
 
-            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <DialogPanel
-                        transition
-                        className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
-                    >
-                        <div>
-                            <div className="text-center">
-                                <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
-                                    {showLocationError}
-                                </DialogTitle>
-                                {/* <div className="mt-2">
+                            <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
+                                <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                                    <DialogPanel
+                                        transition
+                                        className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-sm sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95"
+                                    >
+                                        <div>
+                                            <div className="text-center">
+                                                <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                                                    {showLocationError}
+                                                </DialogTitle>
+                                                {/* <div className="mt-2">
                                     <p className="text-sm text-gray-500">
                                         Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.
                                     </p>
                                 </div> */}
+                                            </div>
+                                        </div>
+                                        <div className="mt-5 sm:mt-6">
+                                            <SleekButton
+                                                text="Go Back"
+                                                onClick={() => {
+                                                    setShowLocationError(undefined);
+                                                }}
+                                            />
+                                        </div>
+                                    </DialogPanel>
+                                </div>
                             </div>
-                        </div>
-                        <div className="mt-5 sm:mt-6">
-                            <SleekButton
-                                text="Go Back"
-                                onClick={() => {
-                                    setShowLocationError(undefined);
-                                }}
-                            />
-                        </div>
-                    </DialogPanel>
-                </div>
-            </div>
-        </Dialog>
+                        </Dialog>
+                    </>}
+
+        </form >
     </>
 }

@@ -7,6 +7,7 @@ import { getAuth, onAuthStateChanged, User } from "firebase/auth";
 import { CookiesProvider } from "./cookies_provider";
 import { DistanceMatrixResponse } from "@/models/distance_matrix_response";
 import { PaymentGatewayResponse } from "@/pages/api/checkout/[id]/create-order";
+import { AddressResponse } from "@/models/address_response";
 
 const auth = getAuth(firebase_app);
 let user: User | null;
@@ -239,9 +240,9 @@ export async function patchCheckout({ checkout }: { checkout: ICheckout }): Prom
     );
 }
 
-export async function fetchDistance({ latitude, longitude }: { latitude: number, longitude: number }): Promise<ApiResponse<DistanceMatrixResponse>> {
+export async function fetchDistance({ placeId }: { placeId: string }): Promise<ApiResponse<DistanceMatrixResponse>> {
     return convertResponse<DistanceMatrixResponse>(
-        fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&key=AIzaSyD2MyysKnNvSEXcAAOLBBkzFw6J2goG3dE&destinations=${latitude},${longitude}&origins=place_id:ChIJ_RabmR_-mzkR3gW7HpAwT4s`, {
+        fetch(`https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&key=AIzaSyD2MyysKnNvSEXcAAOLBBkzFw6J2goG3dE&destinations=place_id:${placeId}&origins=place_id:ChIJ_RabmR_-mzkR3gW7HpAwT4s`, {
             // headers: await getHeaders(),
         })
     );
@@ -300,6 +301,22 @@ export async function deleteCheckout({ checkoutId }: { checkoutId: string }): Pr
         fetch(`/api/checkout/${checkoutId}/`, {
             method: "DELETE",
             headers: await getHeaders(),
+        })
+    );
+}
+
+export async function getAddressFromLatLong({ latitude, longitude }: { latitude: number, longitude: number }): Promise<ApiResponse<AddressResponse>> {
+    return convertResponse<AddressResponse>(
+        fetch(`/api/fetch-address/?latitude=${latitude}&longitude=${longitude}`, {
+            headers: await getHeaders()
+        })
+    );
+}
+
+export async function getCoordinatesFromAddress({ address }: { address: string }): Promise<ApiResponse<GeocodeResponse>> {
+    return convertResponse<GeocodeResponse>(
+        fetch(`/api/fetch-coordinates/?address=${address}`, {
+            headers: await getHeaders()
         })
     );
 }

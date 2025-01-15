@@ -9,6 +9,8 @@ import { OnlineOrderProvider, useOnlineOrderContext } from "./online_order_conte
 import { SelectProductsView } from "./components/select_products";
 import FinalView from "./components/final";
 import SelectAddressView from "./components/select_address";
+import PickLocation from "./components/pick_location";
+import FillAddressForm from "./components/fill_address_form";
 
 export interface DishSelected {
     dish_id?: string | IDish;
@@ -27,7 +29,7 @@ const steps = [
 const OnlineOrderView = () => {
 
 
-    const { dishesSelected, setDishesSelected, currentStep, setCurrentStep, setCheckout, setStartDate, setPaymentMode } = useOnlineOrderContext();
+    const { smallScreenFillAddressForm, smallScreenPickAddress, dishesSelected, setDishesSelected, currentStep, setCurrentStep, setCheckout, setStartDate, setPaymentMode } = useOnlineOrderContext();
     const params = useParams<{ id: string }>()
     const checkoutId: string | null = params?.id ?? null;
 
@@ -41,8 +43,8 @@ const OnlineOrderView = () => {
             }
             if (response.data.payment_mode) {
                 setPaymentMode(response.data.payment_mode);
-            } 
-                
+            }
+
             if (response.data.address) {
                 setCurrentStep(3);
             } else {
@@ -60,7 +62,7 @@ const OnlineOrderView = () => {
 
     return <>
         {currentStep === 1 ? <SelectProductsView /> :
-            currentStep === 2 ? <SelectAddressView /> :
+            currentStep === 2 ? (<SelectAddressView />) :
                 <FinalView />}
     </>;
 }

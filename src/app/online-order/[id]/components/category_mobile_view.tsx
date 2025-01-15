@@ -1,56 +1,36 @@
 import { IDish } from "@/models/dish";
-import { classNames } from "@/utils/class_names";
-import Link from "next/link";
 import { useOnlineOrderContext } from "../online_order_context";
-import { ChevronDownIcon, ChevronUpIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { DishSelected } from "../page";
 import { useState } from "react";
+import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { DishSelected } from "../page";
 import { generateUniqSerial } from "@/utils/unique";
 
-export default function CategoryView({ category, dishes }: { category: string, dishes: IDish[] }) {
+export default function CategoryMobileView({ category, dishes }: { category: string, dishes: IDish[] }) {
 
     const { dishesSelected, setDishesSelected, currentStep, setCurrentStep } = useOnlineOrderContext();
     const [show, setShow] = useState<boolean>(false);
 
-    return <>
-        <tr className=" border-t border-gray-200">
-            <th
-                scope="colgroup"
-                colSpan={5}
-                className=" py-2 pl-4 pr-3 text-left text-sm font-semibold sm:pl-3"
-            >
-                <div className="flex items-center hover:cursor-pointer" onClick={() => {
-                    setShow((prev) => !prev);
-                }}>
-                    <h2 className=" text-2xl/7 font-bold sm:truncate sm:text-3xl sm:tracking-tight">
-                        {category}
-                    </h2>
-                    {show ? <ChevronUpIcon className="h-8 w-8 ml-auto" /> : <ChevronDownIcon className="h-8 w-8 ml-auto" />}
-                </div>
-            </th>
-        </tr>
-        {show &&
-            dishes?.map((dish, personIdx) => (
-                <tr
-                    key={generateUniqSerial()}
-                    className={classNames(personIdx === 0 ? 'border-gray-300' : 'border-gray-200', 'border-t')}
-                >
-                    <td className="py-4 pl-4 pr-3 text-sm font-medium  sm:pl-3">
-                        {dish.name}
-                    </td>
-                    <td className="hidden lg:table-cell px-3 py-4 text-sm max-w-80">{dish.description}</td>
-                    <td className=" px-3 py-4 text-sm ">
-                        {`₹ ${dish.price}` }
-                    </td>
-                    <td className=" px-3 py-4 text-sm ">
-                        {dish.quantity.map((quantity, index) => <div key={generateUniqSerial()} className="flex">
-                            <p>{quantity.name}:{" "}</p>
-                            <p>{quantity.quantity}</p>
-                            <p>{quantity.unit}</p>
-                        </div>)}
-                    </td>
-                    <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
-                        <div className="text-indigo-600 hover:text-indigo-900">
+    return <div className="text-gray-300">
+        <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
+            <h2 className="text-xl font-bold ">{category}</h2>
+            <div className="mt-8 grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8">
+                {dishes.map((dish, index) => (
+                    <div key={generateUniqSerial()}>
+                        <div className="">
+                            <div className="flex items-center mt-4">
+                                <h3 className="text-sm font-bold ">{dish.name}</h3>
+                                <p className="ml-auto text-lg font-semibold text-white">₹ {dish.price}</p>
+                            </div>
+                            <div className=" inset-x-0 top-0 flex items-end justify-end overflow-hidden rounded-lg p-4">
+                                <div
+                                    aria-hidden="true"
+                                    className=" inset-x-0 bottom-0 bg-gradient-to-t from-black opacity-50"
+                                />
+                                <p className="mt-1 text-sm">{dish.description}</p>
+
+                            </div>
+                        </div>
+                        <div className="mt-6">
                             {dishesSelected.some((x) => x.dish?._id === dish._id) ?
                                 <span className="flex rounded-md shadow-sm">
                                     <button
@@ -125,11 +105,9 @@ export default function CategoryView({ category, dishes }: { category: string, d
                                     </button>
                                 </div>}
                         </div>
-                    </td>
-                </tr>
-            ))
-        }
-    </>;
-
-
+                    </div>
+                ))}
+            </div>
+        </div>
+    </div>;
 }

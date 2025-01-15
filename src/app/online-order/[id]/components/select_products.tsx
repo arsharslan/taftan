@@ -12,6 +12,8 @@ import { CookiesProvider } from "@/provider/cookies_provider";
 import { CustomButton } from "@/components/custom_button";
 import Link from "next/link";
 import CategoryView from "./category_view";
+import CategoryMobileView from "./category_mobile_view";
+import { generateUniqSerial } from "@/utils/unique";
 
 export function SelectProductsView() {
 
@@ -152,55 +154,90 @@ export function SelectProductsView() {
 
             <h2 className="mt-8 text-2xl font-bold text-gray-300">Online Order</h2>
 
-            {isLoading ? <LoadingIndicator /> : <div className="text-white grid grid-cols-1 gap-y-12 sm:gap-x-6 ">
-                <table className="min-w-full">
-                    <thead className="">
-                        <tr>
-                            <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-300 sm:pl-3">
-                                Name
-                            </th>
-                            <th scope="col" className="hidden lg:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-300">
-                                Description
-                            </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-300">
-                                Price
-                            </th>
-                            <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-300">
-                                Quantity
-                            </th>
-                            <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                                <span className="sr-only">Edit</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="">
-                        {[
-                            {
-                                category: "Mutton Dishes",
-                                dishes: dishes?.filter((x) => x.category === "Mutton Dishes"),
-                            },
-                            {
-                                category: "Chicken Dishes",
-                                dishes: dishes?.filter((x) => x.category === "Chicken Dishes"),
-                            },
-                            {
-                                category: "Starters",
-                                dishes: dishes?.filter((x) => x.category === "Starters"),
-                            },
-                            {
-                                category: "Ready to Cook",
-                                dishes: dishes?.filter((x) => x.category === "Ready to Cook"),
-                            },
-                            {
-                                category: "Desserts",
-                                dishes: dishes?.filter((x) => x.category === "Desserts"),
-                            },
-                        ].map((dishCollection, index) => (
-                            <CategoryView key={index} category={dishCollection.category ?? ""} dishes={dishCollection.dishes ?? []} />
-                        ))}
-                    </tbody>
-                </table>
-            </div>}
+            <div className="hidden sm:block">
+                {isLoading ? <LoadingIndicator /> : <div className="text-white grid grid-cols-1 gap-y-12 sm:gap-x-6 ">
+                    <table className="min-w-full">
+                        <thead className="">
+                            <tr>
+                                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-300 sm:pl-3">
+                                    Name
+                                </th>
+                                <th scope="col" className="hidden lg:table-cell px-3 py-3.5 text-left text-sm font-semibold text-gray-300">
+                                    Description
+                                </th>
+                                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-300">
+                                    Price
+                                </th>
+                                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-300">
+                                    Quantity
+                                </th>
+                                <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                                    <span className="sr-only">Edit</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="">
+                            {[
+                                {
+                                    category: "Mutton Dishes",
+                                    dishes: dishes?.filter((x) => x.category === "Mutton Dishes"),
+                                },
+                                {
+                                    category: "Chicken Dishes",
+                                    dishes: dishes?.filter((x) => x.category === "Chicken Dishes"),
+                                },
+                                {
+                                    category: "Starters",
+                                    dishes: dishes?.filter((x) => x.category === "Starters"),
+                                },
+                                {
+                                    category: "Ready to Cook",
+                                    dishes: dishes?.filter((x) => x.category === "Ready to Cook"),
+                                },
+                                {
+                                    category: "Desserts",
+                                    dishes: dishes?.filter((x) => x.category === "Desserts"),
+                                },
+                                {
+                                    category: "Beef Dishes",
+                                    dishes: dishes?.filter((x) => x.category === "Beef Dishes"),
+                                },
+                            ].map((dishCollection, index) => <CategoryView key={`${dishCollection.category}L`} category={dishCollection.category ?? ""} dishes={dishCollection.dishes ?? []} />
+                            )}
+                        </tbody>
+                    </table>
+                </div>}
+            </div>
+            <div className="block sm:hidden">
+                {isLoading ? <LoadingIndicator /> : <>
+                    {[
+                        {
+                            category: "Mutton Dishes",
+                            dishes: dishes?.filter((x) => x.category === "Mutton Dishes"),
+                        },
+                        {
+                            category: "Chicken Dishes",
+                            dishes: dishes?.filter((x) => x.category === "Chicken Dishes"),
+                        },
+                        {
+                            category: "Starters",
+                            dishes: dishes?.filter((x) => x.category === "Starters"),
+                        },
+                        {
+                            category: "Ready to Cook",
+                            dishes: dishes?.filter((x) => x.category === "Ready to Cook"),
+                        },
+                        {
+                            category: "Desserts",
+                            dishes: dishes?.filter((x) => x.category === "Desserts"),
+                        },
+                        {
+                            category: "Beef Dishes",
+                            dishes: dishes?.filter((x) => x.category === "Beef Dishes"),
+                        },
+                    ].map((e, index) => <CategoryMobileView key={`${e.category}S`} category={e.category} dishes={e.dishes ?? []} />)}
+                </>}
+            </div>
         </div>
         {
             dishesSelected.length > 0 && <footer className="sticky bottom-0 py-8 ml-auto mr-8">
