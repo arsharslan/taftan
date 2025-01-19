@@ -306,14 +306,14 @@ export default function FinalView() {
                             <ul role="list" className="divide-y divide-golden">
                                 {checkout?.items?.map((product, index) => (
                                     <li key={index} className="flex px-4 py-6 sm:px-6">
-                                        <div className="shrink-0">
+                                        {(product.dish_id as IDish)?.image && <div className="shrink-0">
                                             <Image
                                                 src={(product.dish_id as IDish)?.image ?? ""}
                                                 alt="dish"
                                                 height={64}
                                                 width={64}
                                             />
-                                        </div>
+                                        </div>}
 
                                         <div className="ml-6 flex flex-1 flex-col">
                                             <div className="flex">

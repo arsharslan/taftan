@@ -8,7 +8,18 @@ export async function GET(req: NextApiRequest, res: NextApiResponse<ResponseData
     try {
         await connectDB()
         // Fetch all users
-        const dishes = await Dessert.find();
+        const dishes = await Dessert.find({
+            ...(req.query.main_category === "CHINESE" && {
+                main_category: {
+                    $eq: req.query.main_category
+                }
+            }),
+            ...(req.query.main_category === "MUGHLAI" && {
+                main_category: {
+                    $eq: null
+                }
+            })
+        });
         if (dishes.length > 0) {
             res.status(200).json(dishes);
         } else {

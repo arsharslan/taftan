@@ -1,6 +1,6 @@
 import { IDish } from "@/models/dish";
 import { classNames } from "@/utils/class_names";
-import { CheckIcon, MinusIcon, PlusIcon } from "@heroicons/react/16/solid";
+import { CheckCircleIcon, CheckIcon, MinusIcon, PlusIcon } from "@heroicons/react/16/solid";
 import { Fragment, useEffect, useState } from "react";
 import { useOnlineOrderContext } from "../online_order_context";
 import { DishSelected } from "../page";
@@ -14,29 +14,46 @@ import Link from "next/link";
 import CategoryView from "./category_view";
 import CategoryMobileView from "./category_mobile_view";
 import { generateUniqSerial } from "@/utils/unique";
+import { Radio, RadioGroup } from "@headlessui/react";
+
+enum SelectedMenu {
+    MUGHLAI = "MUGHLAI",
+    CHINESE = "CHINESE"
+}
 
 export function SelectProductsView() {
+
 
     const [dishes, setDishes] = useState<IDish[]>();
     const { dishesSelected, setDishesSelected, currentStep, setCurrentStep } = useOnlineOrderContext();
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [selectedMenu, setSelectedMenu] = useState<SelectedMenu>(SelectedMenu.MUGHLAI);
 
     const router = useRouter();
 
+    const getCategories = () => {
+        const categories: string[] = [];
+        for (let dish of dishes ?? []) {
+            if (!categories.includes(dish.category)) {
+                categories.push(dish.category);
+            }
+        }
+        return categories;
+    }
+
     const getDishes = async () => {
-        console.log("getting dishes")
         setIsLoading(true);
-        const response = await fetchDishes();
+        const response = await fetchDishes({ main_category: selectedMenu.toString() });
         if (response.data) {
-            console.log(response.data)
             setDishes(response.data);
         }
         setIsLoading(false);
     }
 
     useEffect(() => {
+        setDishesSelected([]);
         getDishes();
-    }, []);
+    }, [selectedMenu]);
 
     const [isCreatingCheckout, setIsCreatingCheckout] = useState<boolean>(false);
 
@@ -119,7 +136,51 @@ export function SelectProductsView() {
                 ))}
             </ol>
         </nav> */}
+
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6  lg:max-w-7xl lg:px-8">
+
+            <div className="flex text-gray-200">
+                <fieldset>
+                    <legend className="text-lg font-medium">Select Menu</legend>
+                    <RadioGroup
+                        value={selectedMenu}
+                        onChange={(e) => {
+                            setSelectedMenu(e);
+                        }}
+                        className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4"
+                    >
+                        {Object.values(SelectedMenu).map((menu, index) => (
+                            <Radio
+                                key={index}
+                                value={menu}
+
+                                className="group relative flex cursor-pointer rounded-lg border border-gray-300  p-4 shadow-sm focus:outline-none data-[checked]:border-transparent data-[focus]:ring-2 data-[focus]:ring-indigo-500"
+                            >
+                                <span className="flex flex-1">
+                                    <span className="flex flex-col">
+                                        <span className="block text-sm font-medium">{menu.toString().toUpperCase()}</span>
+                                        {/* <span className="mt-1 flex items-center text-sm text-gray-500">
+                                        {deliveryMethod.turnaround}
+                                    </span> */}
+                                        {/* <span className="mt-6 text-sm font-medium text-gray-900">{deliveryMethod.price}</span> */}
+                                    </span>
+                                </span>
+                                <CheckCircleIcon
+                                    aria-hidden="true"
+                                    className="ml-4 size-5 text-indigo-600 group-[&:not([data-checked])]:hidden"
+                                />
+                                <span
+                                    aria-hidden="true"
+                                    className="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-indigo-500"
+                                />
+                            </Radio>
+                        ))}
+                    </RadioGroup>
+                </fieldset>
+            </div>
+
+            <div className="h-8" />
+
             <div className="">
                 <ul className="list-disc border rounded-lg border-golden p-8 text-white space-y-2">
                     <li>
@@ -177,65 +238,26 @@ export function SelectProductsView() {
                             </tr>
                         </thead>
                         <tbody className="">
-                            {[
-                                {
-                                    category: "Mutton Dishes",
-                                    dishes: dishes?.filter((x) => x.category === "Mutton Dishes"),
-                                },
-                                {
-                                    category: "Chicken Dishes",
-                                    dishes: dishes?.filter((x) => x.category === "Chicken Dishes"),
-                                },
-                                {
-                                    category: "Starters",
-                                    dishes: dishes?.filter((x) => x.category === "Starters"),
-                                },
-                                {
-                                    category: "Ready to Cook",
-                                    dishes: dishes?.filter((x) => x.category === "Ready to Cook"),
-                                },
-                                {
-                                    category: "Desserts",
-                                    dishes: dishes?.filter((x) => x.category === "Desserts"),
-                                },
-                                {
-                                    category: "Beef Dishes",
-                                    dishes: dishes?.filter((x) => x.category === "Beef Dishes"),
-                                },
-                            ].map((dishCollection, index) => <CategoryView key={`${dishCollection.category}L`} category={dishCollection.category ?? ""} dishes={dishCollection.dishes ?? []} />
-                            )}
+                            {
+                                getCategories().map((e) => {
+                                    return {
+                                        category: e,
+                                        dishes: dishes?.filter((x) => x.category === e),
+                                    }
+                                }).map((dishCollection, index) => <CategoryView key={`${dishCollection.category}L`} category={dishCollection.category ?? ""} dishes={dishCollection.dishes ?? []} />
+                                )}
                         </tbody>
                     </table>
                 </div>}
             </div>
             <div className="block sm:hidden">
                 {isLoading ? <LoadingIndicator /> : <>
-                    {[
-                        {
-                            category: "Mutton Dishes",
-                            dishes: dishes?.filter((x) => x.category === "Mutton Dishes"),
-                        },
-                        {
-                            category: "Chicken Dishes",
-                            dishes: dishes?.filter((x) => x.category === "Chicken Dishes"),
-                        },
-                        {
-                            category: "Starters",
-                            dishes: dishes?.filter((x) => x.category === "Starters"),
-                        },
-                        {
-                            category: "Ready to Cook",
-                            dishes: dishes?.filter((x) => x.category === "Ready to Cook"),
-                        },
-                        {
-                            category: "Desserts",
-                            dishes: dishes?.filter((x) => x.category === "Desserts"),
-                        },
-                        {
-                            category: "Beef Dishes",
-                            dishes: dishes?.filter((x) => x.category === "Beef Dishes"),
-                        },
-                    ].map((e, index) => <CategoryMobileView key={`${e.category}S`} category={e.category} dishes={e.dishes ?? []} />)}
+                    {getCategories().map((e) => {
+                        return {
+                            category: e,
+                            dishes: dishes?.filter((x) => x.category === e),
+                        }
+                    }).map((e, index) => <CategoryMobileView key={`${e.category}S`} category={e.category} dishes={e.dishes ?? []} />)}
                 </>}
             </div>
         </div>

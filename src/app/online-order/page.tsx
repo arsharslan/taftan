@@ -140,9 +140,9 @@ export default function OnlineOrdersView() {
                                         const dish = product.dish_id as IDish;
                                         return < li key={index} className="p-4 sm:p-6" >
                                             <div className="flex items-center sm:items-start">
-                                                <div className="size-20 shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:size-40">
+                                                {dish.image && <div className="size-20 shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:size-40">
                                                     <img alt={"dish"} src={dish.image ?? ""} className="size-full object-cover" />
-                                                </div>
+                                                </div>}
                                                 <div className="ml-6 flex-1 text-sm">
                                                     <div className="font-medium  sm:flex sm:justify-between">
                                                         <h5>{dish.name}</h5>

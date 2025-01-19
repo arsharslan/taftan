@@ -16,6 +16,7 @@ export interface IDish extends Document {
     is_bestseller: boolean;
     image?: string | null;
     category: 'Mutton Dishes' | 'Chicken Dishes' | 'Beef Dishes' | 'Starters' | 'Ready to Cook' | 'Desserts';
+    main_category: "MUGHLAI" | "CHINESE";
 }
 
 // Define the schema
@@ -69,6 +70,11 @@ const DessertSchema: Schema<IDish> = new mongoose.Schema(
             type: String,
             required: true,
             enum: ['Mutton Dishes', 'Chicken Dishes', 'Beef Dishes', 'Starters', 'Ready to Cook', 'Desserts'],
+        },
+        main_category: {
+            type: String,
+            required: false,
+            enum: ["MUGHLAI", "CHINESE"],
         },
     },
     { timestamps: true } // Add createdAt and updatedAt fields

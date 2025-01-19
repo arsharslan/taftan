@@ -133,9 +133,16 @@ export async function postUser({ user }: { user: IUser }): Promise<ApiResponse<I
     );
 }
 
-export async function fetchDishes(): Promise<ApiResponse<IDish[]>> {
+export async function fetchDishes({ main_category }: { main_category?: string } = {}): Promise<ApiResponse<IDish[]>> {
+    let url = `/api/dishes/?`;
+    console.log(main_category);
+    if (main_category) {
+        url += `main_category=${main_category}&`;
+    }
+    console.log(url)
+
     return convertResponse<IDish[]>(
-        fetch(`/api/dishes/`, {
+        fetch(url, {
             headers: await getHeaders(),
         })
     );
