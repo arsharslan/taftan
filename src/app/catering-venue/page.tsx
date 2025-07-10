@@ -134,7 +134,7 @@ Our expert catering team takes care of everything, from setup to cleanup. All yo
           📍 <strong>Address:</strong> Opposite Novelty Cinema, Lalbagh, Lucknow 226001
           U.P. India
         </p>
-        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 pt-4 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
+        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 pt-4 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google</a>
 
       </div>
     </div>

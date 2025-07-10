@@ -132,7 +132,7 @@ const CorporateCatering = () => {
 
         </p>
 
-        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
+        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google</a>
 
       </div>
     </div>

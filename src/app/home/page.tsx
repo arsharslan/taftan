@@ -137,7 +137,7 @@ export default function HomePage() {
                             U.P. India
                         </address>
 
-                        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 pt-4 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
+                        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 pt-4 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google</a>
 
 
                         <p className="body-4 navbar-text">Open: 9.30 am - 2.30pm</p>
@@ -464,7 +464,7 @@ export default function HomePage() {
                             U.P. India
                         </address>
 
-                        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 pt-4 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
+                        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 pt-4 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google</a>
 
 
                         <a href="mailto:taftancatering@gmail.com" className="body-4 contact-link">taftancatering@gmail.com</a>
