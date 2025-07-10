@@ -137,6 +137,9 @@ export default function HomePage() {
                             U.P. India
                         </address>
 
+                        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 pt-4 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
+
+
                         <p className="body-4 navbar-text">Open: 9.30 am - 2.30pm</p>
 
                         <a href="mailto:booking@taftan.com" className="body-4 sidebar-link">booking@taftan.com</a>
@@ -460,6 +463,9 @@ export default function HomePage() {
                             Opposite Novelty Cinema, Lalbagh, Lucknow 226001.
                             U.P. India
                         </address>
+
+                        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 pt-4 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
+
 
                         <a href="mailto:booking@taftan.com" className="body-4 contact-link">booking@taftan.com</a>
 

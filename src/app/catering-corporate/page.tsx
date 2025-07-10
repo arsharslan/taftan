@@ -129,7 +129,11 @@ const CorporateCatering = () => {
           📞 <strong>Phone:</strong> +91 7697333333<br />
           📧 <strong>Email:</strong> corporatecatering@taftan.com<br />
           📍 <strong>Address:</strong> Opposite Novelty Cinema, Lalbagh, Lucknow 226001, U.P. India
+
         </p>
+
+        <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
+
       </div>
     </div>
   );
