@@ -142,7 +142,7 @@ export default function HomePage() {
 
                         <p className="body-4 navbar-text">Open: 9.30 am - 2.30pm</p>
 
-                        <a href="mailto:booking@taftan.com" className="body-4 sidebar-link">booking@taftan.com</a>
+                        <a href="mailto:taftancatering@gmail.com" className="body-4 sidebar-link">taftancatering@gmail.com</a>
 
                         <div className="separator"></div>
 
@@ -467,7 +467,7 @@ export default function HomePage() {
                         <a href="https://g.co/kgs/K3YxQXc" className="text-white pb-1 pt-4 mx-auto uppercase" target="_blank" rel="noopener noreferrer">View on Google Maps</a>
 
 
-                        <a href="mailto:booking@taftan.com" className="body-4 contact-link">booking@taftan.com</a>
+                        <a href="mailto:taftancatering@gmail.com" className="body-4 contact-link">taftancatering@gmail.com</a>
 
                         <a href="tel:+88123123456" className="body-4 contact-link">Booking Request : +917697333333</a>
 
