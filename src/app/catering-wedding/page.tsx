@@ -133,7 +133,7 @@ const WeddingCatering = () => {
         <p className={styles.contactDetails}>
           📞 <strong>Phone:</strong> +91 7697333333<br />
           📧 <strong>Email:</strong> weddingcatering@taftan.com<br />
-          📍 <strong>Address:</strong> A-1/702 M I Rustle Court, Gomtinagar Ext-6, Shaheed Path, Lucknow 226010, U.P. India
+          📍 <strong>Address:</strong> Opposite Novelty Cinema, Lalbagh, Lucknow 226001, U.P. India
         </p>
       </div>
     </div>
