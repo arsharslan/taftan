@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         protocol: 'https', // Assuming Pexels uses HTTPS
         hostname: 'img.freepik.com',
       },
+      {
+        protocol: 'https', // Assuming Pexels uses HTTPS
+        hostname: 'raw.githubusercontent.com',
+      },
     ],
   },
   /* config options here */

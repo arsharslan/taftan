@@ -15,13 +15,15 @@ import CategoryView from "./category_view";
 import CategoryMobileView from "./category_mobile_view";
 import { generateUniqSerial } from "@/utils/unique";
 import { Radio, RadioGroup } from "@headlessui/react";
+import Image from "next/image";
+import SelectProductsMobile from "./select_products_mobile";
 
 enum SelectedMenu {
     MUGHLAI = "MUGHLAI",
     CHINESE = "CHINESE"
 }
 
-export function SelectProductsView() {
+function SelectProductsDesktopView() {
 
 
     const [dishes, setDishes] = useState<IDish[]>();
@@ -85,63 +87,25 @@ export function SelectProductsView() {
         setIsCreatingCheckout(false);
     }
 
+    const [selectedCategory, setSelectedCategory] = useState<string>();
 
-    return <div className="flex flex-col h-screen justify-between">
-        {/* <nav aria-label="Progress justify-center">
-            <ol role="list" className="flex items-center">
-                {steps.map((step, stepIdx) => (
-                    <li key={step.name} className={classNames(stepIdx !== steps.length - 1 ? 'pr-8 sm:pr-20' : '', 'relative')}>
-                        {step.status === 'complete' ? (
-                            <>
-                                <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                                    <div className="h-0.5 w-full bg-indigo-600" />
-                                </div>
-                                <a
-                                    href="#"
-                                    className="relative flex size-8 items-center justify-center rounded-full bg-indigo-600 hover:bg-indigo-900"
-                                >
-                                    <CheckIcon aria-hidden="true" className="size-5 text-white" />
-                                    <span className="sr-only">{step.name}</span>
-                                </a>
-                            </>
-                        ) : step.status === 'current' ? (
-                            <>
-                                <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                                    <div className="h-0.5 w-full bg-gray-200" />
-                                </div>
-                                <a
-                                    href="#"
-                                    aria-current="step"
-                                    className="relative flex size-8 items-center justify-center rounded-full border-2 border-indigo-600 bg-white"
-                                >
-                                    <span aria-hidden="true" className="size-2.5 rounded-full bg-indigo-600" />
-                                    <span className="sr-only">{step.name}</span>
-                                </a>
-                            </>
-                        ) : (
-                            <>
-                                <div aria-hidden="true" className="absolute inset-0 flex items-center">
-                                    <div className="h-0.5 w-full bg-gray-200" />
-                                </div>
-                                <a
-                                    href="#"
-                                    className="group relative flex size-8 items-center justify-center rounded-full border-2 border-gray-300 bg-white hover:border-gray-400"
-                                >
-                                    <span aria-hidden="true" className="size-2.5 rounded-full bg-transparent group-hover:bg-gray-300" />
-                                    <span className="sr-only">{step.name}</span>
-                                </a>
-                            </>
-                        )}
-                    </li>
-                ))}
-            </ol>
-        </nav> */}
+
+    return <div className="flex flex-col h-screen justify-between text-white">
 
         <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6  lg:max-w-7xl lg:px-8">
 
-            <div className="flex text-gray-200">
+            <div className="flex items-center justify-center">
+                <Image src={"/images/start-design.png"} alt={""} height={128} width={128} className="" />
+                <div className="text-2xl font-bold text-center mx-8">
+                    Select Menu Type
+                </div>
+                <Image src={"/images/end-design.png"} alt={""} height={128} width={128} className="" />
+            </div>
+
+            <div className="h-8" />
+
+            <div className="flex text-gray-200 items-center justify-center">
                 <fieldset>
-                    <legend className="text-lg font-medium">Select Menu</legend>
                     <RadioGroup
                         value={selectedMenu}
                         onChange={(e) => {
@@ -149,32 +113,18 @@ export function SelectProductsView() {
                         }}
                         className="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4"
                     >
-                        {Object.values(SelectedMenu).map((menu, index) => (
-                            <Radio
-                                key={index}
-                                value={menu}
-
-                                className="group relative flex cursor-pointer rounded-lg border border-gray-300  p-4 shadow-sm focus:outline-none data-[checked]:border-transparent data-[focus]:ring-2 data-[focus]:ring-indigo-500"
-                            >
-                                <span className="flex flex-1">
-                                    <span className="flex flex-col">
-                                        <span className="block text-sm font-medium">{menu.toString().toUpperCase()}</span>
-                                        {/* <span className="mt-1 flex items-center text-sm text-gray-500">
-                                        {deliveryMethod.turnaround}
-                                    </span> */}
-                                        {/* <span className="mt-6 text-sm font-medium text-gray-900">{deliveryMethod.price}</span> */}
-                                    </span>
-                                </span>
-                                <CheckCircleIcon
-                                    aria-hidden="true"
-                                    className="ml-4 size-5 text-indigo-600 group-[&:not([data-checked])]:hidden"
-                                />
-                                <span
-                                    aria-hidden="true"
-                                    className="pointer-events-none absolute -inset-px rounded-lg border-2 border-transparent group-data-[focus]:border group-data-[checked]:border-indigo-500"
-                                />
-                            </Radio>
-                        ))}
+                        {Object.values(SelectedMenu).map((menu, index) => <div key={index}
+                            onClick={() => {
+                                setSelectedMenu(menu)
+                            }}
+                            className={`hover:cursor-pointer bg-gray-900 bg-opacity-60 rounded-lg border ${selectedMenu === menu ? "border-foreground-color" : "border-transparent"} p-4 flex items-center justify-center`}>
+                            <div className={`font-bold  flex items-center ${menu === selectedMenu ? "text-golden" : ""}`}>
+                                <Image src={`/images/${menu.toLowerCase()}_menu.png`} alt={""} height={32} width={32} className="mr-2" />
+                                <div className="capitalize">
+                                    {`${menu.toLowerCase()} Menu`}
+                                </div>
+                            </div>
+                        </div>)}
                     </RadioGroup>
                 </fieldset>
             </div>
@@ -186,34 +136,32 @@ export function SelectProductsView() {
                     <li>
                         Taftan operates on a pre-booked, high-quality food delivery model, focusing on traditional Mughlai, Chinese and Indian cuisine. Customers are required to place orders 24 hours in advance through WhatsApp, phone calls, or our website. This ensures every dish is freshly prepared using premium ingredients to maintain authenticity and flavor.
                     </li>
-                    {/*<br />
-                    <li>
-                        Our offerings include a carefully curated menu featuring items like Mutton Biryani, Chicken Biryani, Mutton Korma, Nihari, Kebabs, and desserts such as Zarda and Kheer. Each dish comes with clear weight specifications, ensuring transparency and customer satisfaction.
-                    </li>
-                    <br />
-
-                    <li>
-                        We cater to a variety of customer needs, from individual meals to larger group orders for special occasions. Delivery is available through our network or via delivery partners, with additional charges based on location.
-                    </li>
-                    <br />
-
-                    <li>
-                        To enhance convenience, we also provide ready-to-cook options like marinated fish, chicken, and kebab paste, allowing customers to enjoy restaurant-quality food at home.
-                    </li>
-                    <br />
-
-                    <li>
-                        {"Taftan ensures compliance with the highest hygiene and safety standards, as evidenced by our FSSAI certification. Our registered trademark further establishes our brand's credibility and commitment to excellence."}
-                    </li>
-                    <br />
-
-                    <li>
-                        By emphasizing quality, freshness, and convenience, Taftan’s model combines traditional culinary values with modern customer preferences, making it a trusted name in pre-booked online food services.
-                    </li> */}
                 </ul>
             </div>
 
-            <h2 className="mt-8 text-2xl font-bold text-gray-300">Online Order</h2>
+            <div className="h-4"/>
+
+            <div className="bg-black bg-opacity-60 flex items-center justify-evenly p-2 rounded-lg">
+                {getCategories().map((category, index) => <div 
+                onClick={() => {
+                    setSelectedCategory(category)
+                }}
+                className={`hover:cursor-pointer rounded-lg py-2 px-4 ${selectedCategory === category ? "bg-golden-background" : ""} `} key={index}>
+                    {category}
+                </div>)}
+            </div>
+
+            <div className="h-4"/>
+
+            <div className="grid grid-cols-2 gap-4">
+                {dishes?.filter((x) => x.category === selectedCategory).map((dish, index) => <div key={index} className="flex bg-black bg-opacity-60 rounded-lg  p-2">
+                    <div className="h-32 w-32 ">
+
+                    <Image src={dish.image ?? "https://images.pexels.com/photos/12737808/pexels-photo-12737808.jpeg"} alt={""} height={128} width={128} className="h-32 w-32 rounded-lg object-cover"/>
+                    </div>
+                </div>)}
+            </div>
+
 
             <div className="hidden sm:block">
                 {isLoading ? <LoadingIndicator /> : <div className="text-white grid grid-cols-1 gap-y-12 sm:gap-x-6 ">
@@ -276,4 +224,19 @@ export function SelectProductsView() {
         <ToastContainer
             toastStyle={{ backgroundColor: "black", color: "white" }} />
     </div >;
+}
+
+export function SelectProductsView() {
+    return (
+        <>
+            {/* Mobile View */}
+            <div className="block sm:hidden">
+                <SelectProductsMobile />
+            </div>
+            {/* Desktop/Tablet View */}
+            <div className="hidden sm:block">
+                <SelectProductsDesktopView />
+            </div>
+        </>
+    );
 }

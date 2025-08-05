@@ -27,7 +27,7 @@ import { CookiesProvider } from '@/provider/cookies_provider'
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth'
 import firebase_app from '@/firebase/config'
 import LoadingIndicator from './loading_indicator'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 const Header = () => {
@@ -35,6 +35,7 @@ const Header = () => {
     const [userId, setUserId] = useState<string>();
     const [isLoaggingOut, setIsLoggingOut] = useState<boolean>(false);
     const router = useRouter();
+    const path = usePathname();
 
     useEffect(() => {
         setListener();
@@ -69,12 +70,36 @@ const Header = () => {
     }
 
     return (
-        <header className="text-gray-300 bg-transparent">
-            <nav aria-label="Global" className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+        <header className="sticky top-0 z-50 text-gray-300 bg-dark-overlay">
+            {/* Mobile Header */}
+            <nav className="flex items-center justify-between p-4 lg:hidden">
+                {/* Hamburger menu */}
+                <button
+                    type="button"
+                    onClick={() => setMobileMenuOpen(true)}
+                    className="inline-flex items-center justify-center rounded-md p-2.5"
+                >
+                    <span className="sr-only">Open main menu</span>
+                    <Bars3Icon aria-hidden="true" className="size-6" />
+                </button>
+                {/* Logo and tagline */}
+                <div className="flex flex-col items-center flex-1">
+                    <Image src="/images/taftan_logo_3.png" alt="Taftan Logo" height={128} width={128} className="mx-auto" />
+                </div>
+                {/* Search icon */}
+                <button className="inline-flex items-center justify-center rounded-md p-2.5">
+                    <span className="sr-only">Search</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+                    </svg>
+                </button>
+            </nav>
+            {/* Desktop Header (unchanged) */}
+            <nav aria-label="Global" className="mx-auto max-w-7xl items-center justify-between p-6 lg:flex hidden lg:px-8">
                 <div className="flex lg:flex-1">
                     <Link href="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">Your Company</span>
-                        <Image src={"/images/taftan_new_logo.png"} alt={""} height={64} width={64} className="mx-auto" />
+                        <Image src={"/images/taftan_logo_2.png"} alt={""} height={128} width={128} className="mx-auto" />
                     </Link>
                 </div>
                 <div className="flex lg:hidden">
@@ -91,7 +116,7 @@ const Header = () => {
                     <Link href="/" className="text-sm/6 font-semibold ">
                         Home
                     </Link>
-                    <Link href="/#menu" className="text-sm/6 font-semibold ">
+                    <Link href="/online-order/0" className={`text-sm/6 font-semibold ${path?.includes("online-order") ? "text-foreground-color" : ""}`}>
                         Menus
                     </Link>
                     <Link href="/#about" className="text-sm/6 font-semibold ">

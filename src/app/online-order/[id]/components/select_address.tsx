@@ -25,10 +25,9 @@ import { MapPinIcon } from "@heroicons/react/20/solid";
 import { useMediaQuery } from 'react-responsive';
 import PickLocation from "./pick_location";
 import FillAddressForm from "./fill_address_form";
+import SelectAddressMobile from "./select_address_mobile";
 
-
-export default function SelectAddressView() {
-
+function SelectAddressDesktopView() {
     const [addresses, setAddresses] = useState<IAddress[]>([]);
     const [open, setOpen] = useState<boolean>(false);
     const [addressBeingSelected, setAddressBeingSelected] = useState<string>();
@@ -366,3 +365,20 @@ export default function SelectAddressView() {
         </form >
     </>
 }
+
+export function SelectAddressView() {
+    return (
+        <>
+            {/* Mobile View */}
+            <div className="block sm:hidden">
+                <SelectAddressMobile />
+            </div>
+            {/* Desktop/Tablet View */}
+            <div className="hidden sm:block">
+                <SelectAddressDesktopView />
+            </div>
+        </>
+    );
+}
+
+export default SelectAddressView;
