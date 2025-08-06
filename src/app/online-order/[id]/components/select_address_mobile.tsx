@@ -3,7 +3,7 @@ import { fetchAddresses, patchCheckout } from "@/provider/api_provider";
 import { useEffect, useState } from "react";
 import { useOnlineOrderContext } from "../online_order_context";
 import { CookiesProvider } from "@/provider/cookies_provider";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import LoadingIndicator from "@/components/loading_indicator";
 import { ArrowLongRightIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { HomeIcon, BuildingOfficeIcon } from "@heroicons/react/20/solid";
@@ -65,13 +65,15 @@ const SelectAddressMobile = () => {
         );
     };
 
+    const router = useRouter();
+
     return (
         <div className="flex flex-col min-h-screen bg-gradient-to-b from-[#0A0101] via-[#1F0B0B] via-[#2A180A] to-[#4C2C15] text-white">
             {/* Add Address Section */}
             <div className="flex items-center justify-center mt-6">
                 <Image src="/images/start-design.png" alt="" height={64} width={64} className="" />
                 <div className="text-xl font-bold text-center mx-4">
-                    Add Address
+                    Address
                 </div>
                 <Image src="/images/end-design.png" alt="" height={64} width={64} className="" />
             </div>
@@ -132,13 +134,23 @@ const SelectAddressMobile = () => {
 
             {/* Continue Button */}
             <div className="fixed bottom-4 left-4 right-4">
+                <div className="flex gap-4">
+                <button
+                    onClick={() => {
+                        router.push("/add-address?navigate_back=true");
+                    }}
+                    className="w-full border border-foreground-color text-white py-4 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    Add New
+                </button>
                 <button
                     onClick={handleContinue}
-                    disabled={!selectedAddressId || addressBeingSelected}
+                    disabled={selectedAddressId === undefined || addressBeingSelected !== undefined}
                     className="w-full bg-golden-background text-white py-4 rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                     Continue
                 </button>
+                </div>
             </div>
 
         </div>

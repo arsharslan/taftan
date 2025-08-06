@@ -212,7 +212,6 @@ const SelectProductsMobile = () => {
                                     
                                     
                                 </div>
-
                             </div>
                         ))}
                     </div>
