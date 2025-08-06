@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -33,7 +33,7 @@ const addressSchema = z.object({
 
 type AddressFormData = z.infer<typeof addressSchema>;
 
-export default function AddAddressPage() {
+const  AddAddressPageView = () => {
   const [coordinates, setCoordinates] = useState<[number, number]>([0, 0]);
   const [showMap, setShowMap] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -441,3 +441,9 @@ export default function AddAddressPage() {
     </div>
   );
 } 
+
+export default function AddAddressPage() {
+    return <Suspense>
+        <AddAddressPageView />
+    </Suspense>
+}
